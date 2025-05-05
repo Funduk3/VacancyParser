@@ -17,54 +17,28 @@ public class FormatterService {
                 page.getTotalPages(),
                 page.getTotalElements()));
 
-        page.getContent().forEach(v -> {
-            sb.append(String.format("\nID: %s\nTitle: %s\nCompany: %s\n",
-                    v.getId(), v.getName(), v.getEmployerName()));
-
-            if (v.getSalaryFrom() != null || v.getSalaryTo() != null) {
-                sb.append(String.format("Salary: %s - %s\n",
-                        v.getSalaryFrom() != null ? v.getSalaryFrom() : "?",
-                        v.getSalaryTo() != null ? v.getSalaryTo() : "?"));
-            }
-
-            sb.append(String.format("Published: %s\n",
-                    v.getPublishedAt() != null ?
-                            v.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) :
-                            "N/A"
-            ));
-        });
+        page.getContent().forEach(v -> sb.append(formatVacancy(v)));
 
         return sb.toString();
     }
 
-    public String formatResponse(VacancyResponse response) {
-        if (response == null || response.getItems() == null) {
-            return "No vacancies found";
-        }
-
+    public String formatVacancy(VacancyEntity vacancy) {
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("Found %d vacancies (Page %d/%d):\n\n",
-                response.getFound(), response.getPage() + 1, response.getPages()));
+        sb.append(String.format("\nID: %s\nTitle: %s\nCompany: %s\n",
+                vacancy.getId(), vacancy.getName(), vacancy.getEmployerName()));
 
-        for (Vacancy vacancy : response.getItems()) {
-            sb.append(String.format("➤ %s\n", vacancy.getName()))
-                    .append(String.format("   ID: %s\n", vacancy.getId()))
-                    .append(String.format("   Company: %s\n",
-                            vacancy.getEmployer() != null ? vacancy.getEmployer().getName() : "Unknown"))
-                    .append(formatSalary(vacancy.getSalary()))
-                    .append(String.format("   Published: %s\n\n",
-                            vacancy.getPublishedAt() != null ?
-                                    vacancy.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) :
-                                    "Unknown"));
+        if (vacancy.getSalaryFrom() != null || vacancy.getSalaryTo() != null) {
+            sb.append(String.format("Salary: %s - %s %s\n",
+                    vacancy.getSalaryFrom() != null ? vacancy.getSalaryFrom() : "?",
+                    vacancy.getSalaryTo() != null ? vacancy.getSalaryTo() : "?",
+                    vacancy.getSalaryCurrency() != null ? vacancy.getSalaryCurrency() : "RUB"));
         }
-        return sb.toString();
-    }
 
-    public String formatSalary(Vacancy.Salary salary) {
-        if (salary == null) return "   Salary: Not specified\n";
-        return String.format("   Salary: %s - %s %s\n",
-                salary.getFrom() != null ? salary.getFrom() : "?",
-                salary.getTo() != null ? salary.getTo() : "?",
-                salary.getCurrency() != null ? salary.getCurrency() : "?");
+        sb.append(String.format("Published: %s\n",
+                vacancy.getPublishedAt() != null ?
+                        vacancy.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) :
+                        "N/A"
+        ));
+        return sb.toString();
     }
 }

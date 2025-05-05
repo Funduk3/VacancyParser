@@ -34,3 +34,101 @@
 1746179589593:help
 1746179608260:help show-vacancies
 1746180015064:show-vacancies --title Python
+1746438318545:help
+1746438339531:list-saved
+1746438356531:show-vacancies
+1746438377537:help
+1746438384958:fetch-vacancies
+1746438458871:vacancy-details
+1746438470337:help
+1746438481642:help show-vacancies
+1746438491733:help fetch-vacancies
+1746438524954:help
+1746438533154:help vacancy-details
+1746438584018:show-vacancies
+1746438596955:vacancy-details --id 119935746
+1746439361448:help
+1746439398246:help vacancy-details
+1746439416364:show-vacancies --text Java
+1746439423353:show-vacancies --title Java
+1746439442318:vacancy-details -i 120016539
+1746439482962:list-saved
+1746439492595:show-vacanceis
+1746439495571:show-vacancies
+1746439940621:clear
+1746439949429:help
+1746439961165:stacktrace
+1746439970506:version
+1746439988841:help fetch-vacancies
+1746440003851:fetch-vacancies
+1746440071250:fetch-vacancies -t Python
+1746440133330:show-vacancies
+1746440145713:fetch-vacancieshelp
+1746440151337:help fetch-vacancies
+1746440166082:fetch-vacancies --help
+1746440177945:fetch-vacancies --text Python
+1746440500758:clear
+1746440516757:fetch-vacancies --text Python
+1746440526065:fetch-vacancies
+1746440566511:show-vacancies
+1746440574089:fetch-vacancies
+1746445706911:show-vacancies
+1746445714964:fetch-vacancies
+1746445942705:showshow-vacancies
+1746445946772:show-vacancies
+1746446932161:list-saved
+1746446939435:show-vacancies
+1746447010256:list-saved
+1746447016423:fetch-vacancies
+1746447027607:list-saved
+1746447038510:show-vacancies
+1746447525477:help
+1746447535890:help delete-vacancy
+1746447542925:delete-vacancy 1
+1746447560212:show-vacancies -t Python
+1746447582101:show-vacancies -t C++
+1746447594848:help fetch-vacancies
+1746447618014:fetch-vacancies --text C+=
+1746447629275:show-vacancies -t C++
+1746447836097:fetch-vacancies -t Python
+1746447851965:fetch-vacancies --text C++
+1746448393236:show-vacancies
+1746448397866:help
+1746448413526:fetch-vacancies -t .NET
+1746448590726:show-vacancies
+1746448612329:fetch-vacancies -t .NET
+1746448692920:show-vacancies
+1746448705640:fetch-vacancies -t .NET
+1746448861965:show-vacancies -t .NET -a 1
+1746448873355:fetch-vacancies -t .NET -a 1
+1746448885768:show-vacancies -t .NET
+1746449791709:show-vacancies
+1746449845151:fetch-vacancies -t Менеджер
+1746449878941:fetch-vacancies -t JavaScript
+1746449903340:show-vacancies -t JavaScript
+1746455885373:show
+1746455892156:show-vacancies
+1746455971610:fetch-vacancies -t IT -a 1
+1746455983767:show-vacancies -t IT
+1746456086959:hl
+1746456089739:ephl
+1746456093557:el
+1746456097337:ephpca
+1746456105276:la
+1746456121969:help
+1746456127388:show-vacancies
+1746456142926:help delete-vacancies
+1746456148321:help delete-vacancy
+1746456164447:delete-vacancy -i 120223111
+1746456181884:help show-vacancies
+1746456266436:help
+1746456280671:show-vacancies
+1746457238561:help
+1746457268058:help find-by-id
+1746457286046:find-by-id --id 1
+1746468395081:help
+1746468405509:find-by-id --id 1
+1746468433188:find-by-id --id 120234396
+1746468956214:help
+1746468976481:find-by-id --id 120234396
+1746469043297:find-by-id --id 1

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VacancyService {
@@ -20,49 +21,6 @@ public class VacancyService {
     @Autowired
     public VacancyService(VacancyRepo repository) {
         this.repository = repository;
-    }
-
-    public String printListVacancies() {
-        StringBuilder sb = new StringBuilder();
-        repository.findAll().forEach(vacancy ->
-                sb.append(vacancy.getName()).append("\n")
-        );
-        return sb.toString();
-    }
-
-    public void saveVacancies(List<Vacancy> vacancies) {
-        List<VacancyEntity> entities = new ArrayList<>();
-
-        for (Vacancy vacancy : vacancies) {
-            VacancyEntity entity = new VacancyEntity();
-            entity.setId(vacancy.getId());
-            entity.setName(vacancy.getName());
-
-            if (vacancy.getSalary() != null) {
-                entity.setSalaryFrom(vacancy.getSalary().getFrom());
-                entity.setSalaryTo(vacancy.getSalary().getTo());
-                entity.setSalaryCurrency(vacancy.getSalary().getCurrency());
-                entity.setSalaryGross(vacancy.getSalary().getGross());
-            }
-
-            if (vacancy.getEmployer() != null) {
-                entity.setEmployerId(vacancy.getEmployer().getId());
-                entity.setEmployerName(vacancy.getEmployer().getName());
-            }
-
-            entity.setDescription(vacancy.getDescription());
-
-            if (vacancy.getAddress() != null) {
-                entity.setCity(vacancy.getAddress().getCity());
-                entity.setStreet(vacancy.getAddress().getStreet());
-            }
-
-            entity.setPublishedAt(vacancy.getPublishedAt());
-
-            entities.add(entity);
-        }
-
-        repository.saveAll(entities);
     }
 
     @Value("${app.pagination.default-size:10}")
@@ -82,7 +40,20 @@ public class VacancyService {
                 company,
                 minSalary,
                 maxSalary,
-                PageRequest.of(page, size, Sort.by("publishedAt").descending())
+                PageRequest.of(page, pageSize, Sort.by("publishedAt").descending())
         );
+    }
+
+    public VacancyEntity getVacancy(String id) {
+        return repository.findById(id).orElse(null);
+    }
+
+    public boolean deleteVacancy(String id) {
+        Optional<VacancyEntity> vacancyOpt = repository.findById(id);
+        if (vacancyOpt.isPresent()) {
+            repository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 }
