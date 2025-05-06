@@ -1,13 +1,11 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.models.Vacancy;
-import com.fedordemin.vacancyparser.models.VacancyResponse;
+import com.fedordemin.vacancyparser.models.VacancyResponseHhRu;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -23,7 +21,7 @@ public class HHApiService {
         this.restTemplate = restTemplate;
     }
 
-    public VacancyResponse searchVacancies(String text, String area, int page, int perPage) {
+    public VacancyResponseHhRu searchVacancies(String text, String area, int page, int perPage) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "VacancyParser/1.0");
 
@@ -35,11 +33,11 @@ public class HHApiService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<VacancyResponse> response = restTemplate.exchange(
+        ResponseEntity<VacancyResponseHhRu> response = restTemplate.exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity,
-                VacancyResponse.class
+                VacancyResponseHhRu.class
         );
         return response.getBody();
     }

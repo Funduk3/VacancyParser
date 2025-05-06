@@ -12,6 +12,8 @@ public class VacancyEntity {
     @Id
     private String id;
 
+    private String alternate_url;
+
     private String name;
     private Integer salaryFrom;
     private Integer salaryTo;
@@ -27,9 +29,14 @@ public class VacancyEntity {
 
     private LocalDateTime publishedAt;
 
-    public VacancyEntity(String _id, String _name, String _employer_name, Integer _salaryFrom, Integer _salaryTo, String vs,
+    private String requirements;
+    private String scheduleName;
+    private String experienceName;
+
+    public VacancyEntity(String _id, String _alternate_url, String _name, String _employer_name, Integer _salaryFrom, Integer _salaryTo, String vs,
                          LocalDateTime _publishedAt, String _description) {
         this.id = _id;
+        this.alternate_url = _alternate_url;
         this.name = _name;
         this.employerName = _employer_name;
         this.salaryFrom = _salaryFrom;

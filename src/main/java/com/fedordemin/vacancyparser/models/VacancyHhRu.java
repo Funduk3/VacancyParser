@@ -2,13 +2,14 @@ package com.fedordemin.vacancyparser.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Vacancy {
+public class VacancyHhRu {
     private String id;
     private String name;
     private Salary salary;
@@ -17,6 +18,13 @@ public class Vacancy {
     private Address address;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
     private LocalDateTime publishedAt;
+
+    @JsonProperty("alternate_url")
+    private String url;
+
+    private Snippet snippet;
+    private Schedule schedule;
+    private Experience experience;
 
     @Data
     public class Salary {

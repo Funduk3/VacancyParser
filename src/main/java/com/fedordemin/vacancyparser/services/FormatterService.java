@@ -1,7 +1,5 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.models.Vacancy;
-import com.fedordemin.vacancyparser.models.VacancyResponse;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -33,12 +31,17 @@ public class FormatterService {
                     vacancy.getSalaryTo() != null ? vacancy.getSalaryTo() : "?",
                     vacancy.getSalaryCurrency() != null ? vacancy.getSalaryCurrency() : "RUB"));
         }
+        sb.append(String.format("Requirements: %s\n",
+                vacancy.getRequirements() != null ? vacancy.getRequirements() : "N/A"));
 
         sb.append(String.format("Published: %s\n",
                 vacancy.getPublishedAt() != null ?
                         vacancy.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) :
                         "N/A"
         ));
+        sb.append(String.format("Url: %s\n",
+                vacancy.getAlternate_url() != null ? vacancy.getAlternate_url() : "N/A"));
+
         return sb.toString();
     }
 }

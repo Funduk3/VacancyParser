@@ -39,19 +39,19 @@
 1746438356531:show-vacancies
 1746438377537:help
 1746438384958:fetch-vacancies
-1746438458871:vacancy-details
+1746438458871:vacancyHhRu-details
 1746438470337:help
 1746438481642:help show-vacancies
 1746438491733:help fetch-vacancies
 1746438524954:help
-1746438533154:help vacancy-details
+1746438533154:help vacancyHhRu-details
 1746438584018:show-vacancies
-1746438596955:vacancy-details --id 119935746
+1746438596955:vacancyHhRu-details --id 119935746
 1746439361448:help
-1746439398246:help vacancy-details
+1746439398246:help vacancyHhRu-details
 1746439416364:show-vacancies --text Java
 1746439423353:show-vacancies --title Java
-1746439442318:vacancy-details -i 120016539
+1746439442318:vacancyHhRu-details -i 120016539
 1746439482962:list-saved
 1746439492595:show-vacanceis
 1746439495571:show-vacancies
@@ -83,8 +83,8 @@
 1746447027607:list-saved
 1746447038510:show-vacancies
 1746447525477:help
-1746447535890:help delete-vacancy
-1746447542925:delete-vacancy 1
+1746447535890:help delete-vacancyHhRu
+1746447542925:delete-vacancyHhRu 1
 1746447560212:show-vacancies -t Python
 1746447582101:show-vacancies -t C++
 1746447594848:help fetch-vacancies
@@ -118,8 +118,8 @@
 1746456121969:help
 1746456127388:show-vacancies
 1746456142926:help delete-vacancies
-1746456148321:help delete-vacancy
-1746456164447:delete-vacancy -i 120223111
+1746456148321:help delete-vacancyHhRu
+1746456164447:delete-vacancyHhRu -i 120223111
 1746456181884:help show-vacancies
 1746456266436:help
 1746456280671:show-vacancies
@@ -132,3 +132,24 @@
 1746468956214:help
 1746468976481:find-by-id --id 120234396
 1746469043297:find-by-id --id 1
+1746470622254:help
+1746470625499:show-vacancies
+1746470984318:help
+1746470988616:show-vacancies
+1746470998155:help fetch-vacancies
+1746471015150:fetch-vacancies
+1746471024663:show-vacancies
+1746512854993:help
+1746512860742:show-vacancies
+1746512910255:help
+1746512912895:show-vacancies
+1746512920986:help fetch-vacancies
+1746512964134:fetch-vacancies --text Ruby
+1746512984873:stacktrace
+1746512998872:show-vacancies
+1746514334917:help
+1746514337719:show-vacancies
+1746514362088:fetch-vacancies -t Scala
+1746514572032:show-vacancies
+1746514678241:fetch-vacancies -t Ruby
+1746514685930:show-vacancies
