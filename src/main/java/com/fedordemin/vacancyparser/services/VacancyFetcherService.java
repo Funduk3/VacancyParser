@@ -21,6 +21,7 @@ public class VacancyFetcherService {
     private static final Logger log = LoggerFactory.getLogger(VacancyFetcherService.class);
 
     private final HHApiService hhApiService;
+    private final ConverterToEntityService converterToEntityService;
     private final VacancyRepo vacancyRepo;
 
     @Value("${app.hh.pages:5}")
@@ -30,9 +31,11 @@ public class VacancyFetcherService {
     private int perPage;
 
     @Autowired
-    public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo) {
+    public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo,
+                                 ConverterToEntityService converterToEntityService) {
         this.hhApiService = hhApiService;
         this.vacancyRepo = vacancyRepo;
+        this.converterToEntityService = converterToEntityService;
     }
 
     @Scheduled(cron = "0 */30 * * * ?")
@@ -62,7 +65,7 @@ public class VacancyFetcherService {
 
                 List<VacancyEntity> pageEntities = new ArrayList<>();
                 for (VacancyHhRu vacancyHhRu : response.getItems()) {
-                    pageEntities.add(convertToEntity(vacancyHhRu));
+                    pageEntities.add(converterToEntityService.convertEntityFromHhRu(vacancyHhRu));
                 }
 
                 entitiesToSave.addAll(pageEntities);
@@ -84,55 +87,5 @@ public class VacancyFetcherService {
             log.error("Error fetching vacancies: {}", e.getMessage(), e);
         }
         return totalFetched;
-    }
-
-    private VacancyEntity convertToEntity(VacancyHhRu vacancyHhRu) {
-        try {
-            VacancyEntity entity = new VacancyEntity();
-            entity.setId(vacancyHhRu.getId());
-            entity.setName(vacancyHhRu.getName());
-            entity.setAlternate_url(vacancyHhRu.getUrl());
-            if (vacancyHhRu.getEmployer() != null) {
-                entity.setEmployerId(vacancyHhRu.getEmployer().getId());
-                entity.setEmployerName(vacancyHhRu.getEmployer().getName());
-            }
-            if (vacancyHhRu.getSalary() != null) {
-                entity.setSalaryFrom(vacancyHhRu.getSalary().getFrom());
-                entity.setSalaryTo(vacancyHhRu.getSalary().getTo());
-                entity.setSalaryCurrency(vacancyHhRu.getSalary().getCurrency());
-                entity.setSalaryGross(vacancyHhRu.getSalary().getGross());
-            }
-            if (vacancyHhRu.getAddress() != null) {
-                entity.setCity(vacancyHhRu.getAddress().getCity());
-                entity.setStreet(vacancyHhRu.getAddress().getStreet());
-            }
-            if (vacancyHhRu.getSchedule() != null) {
-                entity.setScheduleName(vacancyHhRu.getSchedule().getName());
-            }
-            if (vacancyHhRu.getExperience() != null) {
-                entity.setExperienceName(vacancyHhRu.getExperience().getName());
-            }
-            if (vacancyHhRu.getSnippet() != null) {
-                entity.setRequirements(vacancyHhRu.getSnippet().getRequirement());
-            }
-            entity.setPublishedAt(vacancyHhRu.getPublishedAt());
-            entity.setDescription(vacancyHhRu.getDescription());
-
-            return entity;
-        } catch (Exception e) {
-            log.warn("Error converting vacancy {}: {}", vacancyHhRu.getId(), e.getMessage());
-            return null;
-        }
-    }
-
-    private List<VacancyEntity> convertToEntities(List<VacancyHhRu> vacancies) {
-        List<VacancyEntity> entities = new ArrayList<>();
-        for (VacancyHhRu vacancyHhRu : vacancies) {
-            VacancyEntity entity = convertToEntity(vacancyHhRu);
-            if (entity != null) {
-                entities.add(entity);
-            }
-        }
-        return entities;
     }
 }

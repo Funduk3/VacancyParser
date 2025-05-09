@@ -1,13 +1,20 @@
 package com.fedordemin.vacancyparser.components;
 
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.services.*;
+import com.fedordemin.vacancyparser.utils.CsvUtil;
+import com.fedordemin.vacancyparser.utils.JsonUtil;
+import com.fedordemin.vacancyparser.utils.XlsxUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 @ShellComponent
 public class VacancyCommands {
@@ -118,6 +125,42 @@ public class VacancyCommands {
             return "Vacancy with ID " + vacancyId + " was successfully deleted";
         } else {
             return "Vacancy not found with ID: " + vacancyId;
+        }
+    }
+
+    @ShellMethod(value = "Export vacancies to different types", key = "export-vacancies")
+    public String exportEmployees(@ShellOption(value = {"-t", "--type"},
+                                          help = "Type of the export file",
+                                  defaultValue = "csv") String fileType,
+                                @ShellOption(defaultValue = "vacancies") String filename) {
+        try {
+            filename += "." + fileType;
+            List<VacancyEntity> all = vacancyService.getAllVacancies();
+            log.info(fileType);
+            log.info(filename);
+            switch (fileType.toLowerCase()) {
+                case "csv" -> {
+                    byte[] csv = CsvUtil.toCsvBytes(all);
+                    Files.write(Paths.get(filename), csv);
+                    break;
+                }
+                case "json" -> {
+                    byte[] json = JsonUtil.toJsonBytes(all);
+                    Files.write(Paths.get(filename), json);
+                    break;
+                }
+                case "xlsx" -> {
+                    byte[] xlsx = XlsxUtil.toXlsxBytes(all);
+                    Files.write(Paths.get(filename), xlsx);
+                    break;
+                }
+                default -> {
+                    return "No such type";
+                }
+            }
+            return "Export completed: " + filename;
+        } catch (IOException e) {
+            return "Error during export: " + e.getMessage();
         }
     }
 }

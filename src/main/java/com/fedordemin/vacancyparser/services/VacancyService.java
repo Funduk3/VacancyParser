@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -43,6 +44,10 @@ public class VacancyService {
 
     public VacancyEntity getVacancy(String id) {
         return repository.findById(id).orElse(null);
+    }
+
+    public List<VacancyEntity> getAllVacancies() {
+        return repository.findAll();
     }
 
     public boolean deleteVacancy(String id) {

@@ -153,3 +153,19 @@
 1746514572032:show-vacancies
 1746514678241:fetch-vacancies -t Ruby
 1746514685930:show-vacancies
+1746558999588:help
+1746559112188:export-vacancies-to-csv
+1746561627404:help
+1746561649418:help export-vacancies
+1746561691845:export-vacancies -t json
+1746561924787:help
+1746561945310:export-vacancies -t json
+1746561985495:export-vacancies -t csv
+1746804628899:help
+1746804642996:export-vacancies
+1746804739159:help export-vacancies
+1746804802174:export-vacancies --type json
+1746804872445:export-vacancies --type xlsx
+1746804907740:export-vacancies --type nigga
+1746805319077:help
+1746805327639:export-vacancies --type goida

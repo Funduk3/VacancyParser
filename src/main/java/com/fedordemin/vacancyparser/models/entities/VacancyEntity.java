@@ -33,17 +33,5 @@ public class VacancyEntity {
     private String scheduleName;
     private String experienceName;
 
-    public VacancyEntity(String _id, String _alternate_url, String _name, String _employer_name, Integer _salaryFrom, Integer _salaryTo, String vs,
-                         LocalDateTime _publishedAt, String _description) {
-        this.id = _id;
-        this.alternate_url = _alternate_url;
-        this.name = _name;
-        this.employerName = _employer_name;
-        this.salaryFrom = _salaryFrom;
-        this.salaryTo = _salaryTo;
-        this.publishedAt = _publishedAt;
-        this.description = _description;
-    }
-
     public VacancyEntity() {}
 }
