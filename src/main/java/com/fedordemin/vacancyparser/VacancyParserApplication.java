@@ -10,5 +10,4 @@ public class VacancyParserApplication {
     public static void main(String[] args) {
         SpringApplication.run(VacancyParserApplication.class, args);
     }
-
 }

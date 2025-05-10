@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.services;
+package com.fedordemin.vacancyparser.services.converters;
 
 import com.fedordemin.vacancyparser.models.VacancyHhRu;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
@@ -10,8 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ConverterToEntityService {
-    private static final Logger log = LoggerFactory.getLogger(ConverterToEntityService.class);
+public class ConverterToEntityFromHhRuService {
+    private static final Logger log = LoggerFactory.getLogger(ConverterToEntityFromHhRuService.class);
 
     public VacancyEntity convertEntityFromHhRu(VacancyHhRu vacancyHhRu) {
         try {

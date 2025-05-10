@@ -169,3 +169,36 @@
 1746804907740:export-vacancies --type nigga
 1746805319077:help
 1746805327639:export-vacancies --type goida
+1746820551901:help
+1746820560925:help fetch-vacancies
+1746820637196:help
+1746820656975:help fetch-vacancies
+1746820692391:fetch-vacancies -s hh.ru
+1746820708860:fetch-vacancies -s trudvsem.ru
+1746821049238:help
+1746821054927:fetch-vacancies
+1746821081557:fetch-vacancies -s trudvsem.ru
+1746821130480:help
+1746821147715:fetch-vacancies -s trudvsem.ru
+1746863827006:help
+1746863843819:fetch-vacancies -s trudvsem.ru
+1746871416793:stacktrace
+1746871718459:fetch-vacancies -s trudvsem.ru
+1746872048207:stacktrace
+1746872227777:fetch-vacancies -s trudvsem.ru
+1746902308629:help
+1746902339901:help find-by-id
+1746902381547:find-by-id --id dc7324f0-2407-11f0-96cb-25abf1fceba2
+1746902401643:help
+1746902407780:show-vacancies
+1746902412215:help show-vacancies
+1746902438776:show-vacancies
+1746902459451:show-vacancies --page 2
+1746902465797:show-vacancies --page 3
+1746902482510:show-vacancies --page 5
+1746902495596:help
+1746902503856:help delete-vacancy
+1746902531850:delete-vacancy --id dc177060-2407-11f0-96cb-25abf1fceba2
+1746902539385:help
+1746902555038:fetch-vacancies --site trudvsem.ru
+1746902562980:fetch-vacancies -s trudvsem.ru

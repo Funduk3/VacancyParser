@@ -2,38 +2,21 @@ package com.fedordemin.vacancyparser.components;
 
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.services.*;
-import com.fedordemin.vacancyparser.utils.CsvUtil;
-import com.fedordemin.vacancyparser.utils.JsonUtil;
-import com.fedordemin.vacancyparser.utils.XlsxUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
-
 @ShellComponent
 public class VacancyCommands {
-    private final HHApiService hhApiService;
     private final VacancyService vacancyService;
-    private final FormatterService formatter;
-    private final VacancyFetcherService vacancyFetcherService;
     private static final Logger log = LoggerFactory.getLogger(VacancyCommands.class);
 
     @Autowired
     public VacancyCommands(
-            HHApiService hhApiService,
-            VacancyService vacancyService,
-            FormatterService formatter,
-            VacancyFetcherService vacancyFetcherService) {
-        this.hhApiService = hhApiService;
+            VacancyService vacancyService) {
         this.vacancyService = vacancyService;
-        this.formatter = formatter;
-        this.vacancyFetcherService = vacancyFetcherService;
     }
 
     @ShellMethod(key = "find-by-id", value = "Find Vacancy by id")
@@ -45,7 +28,7 @@ public class VacancyCommands {
         if (result == null) {
             return "Vacancy not found with ID: " + id;
         }
-        return formatter.formatVacancy(result);
+        return vacancyService.formatVacancy(result);
     }
 
     @ShellMethod(key = "show-vacancies", value = "Show filtered vacancies")
@@ -90,10 +73,10 @@ public class VacancyCommands {
                 title, company, minSalary, maxSalary, page, size
         );
 
-        return formatter.formatResult(result);
+        return vacancyService.formatResult(result);
     }
 
-    @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from HeadHunter API")
+    @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from various API")
     public String fetchVacancies(
             @ShellOption(
                     value = {"-t", "--text"},
@@ -105,12 +88,16 @@ public class VacancyCommands {
                     value = {"-a", "--area"},
                     help = "Area code (1 - Moscow, 2 - St. Petersburg)",
                     defaultValue = "1"
-            ) String area
+            ) String area,
+            @ShellOption(
+                    value = {"-s", "-website"},
+                    help = "Website to find data (hh.ru, trudvsem.ru)",
+                    defaultValue = "hh.ru"
+            ) String site
     ) {
-        int count;
         log.debug("Finding vacancies for : {}", searchText);
-        count = vacancyFetcherService.fetchVacancies(searchText, area);
-        return String.format("Successfully fetched %d vacancies from HeadHunter API", count);
+        vacancyService.fetchVacancies(searchText, area, site);
+        return "Successfully fetched vacancies";
     }
 
     @ShellMethod(key = "delete-vacancy", value = "Delete a vacancy from the database")
@@ -133,34 +120,6 @@ public class VacancyCommands {
                                           help = "Type of the export file",
                                   defaultValue = "csv") String fileType,
                                 @ShellOption(defaultValue = "vacancies") String filename) {
-        try {
-            filename += "." + fileType;
-            List<VacancyEntity> all = vacancyService.getAllVacancies();
-            log.info(fileType);
-            log.info(filename);
-            switch (fileType.toLowerCase()) {
-                case "csv" -> {
-                    byte[] csv = CsvUtil.toCsvBytes(all);
-                    Files.write(Paths.get(filename), csv);
-                    break;
-                }
-                case "json" -> {
-                    byte[] json = JsonUtil.toJsonBytes(all);
-                    Files.write(Paths.get(filename), json);
-                    break;
-                }
-                case "xlsx" -> {
-                    byte[] xlsx = XlsxUtil.toXlsxBytes(all);
-                    Files.write(Paths.get(filename), xlsx);
-                    break;
-                }
-                default -> {
-                    return "No such type";
-                }
-            }
-            return "Export completed: " + filename;
-        } catch (IOException e) {
-            return "Error during export: " + e.getMessage();
-        }
+        return vacancyService.export(fileType, filename);
     }
 }

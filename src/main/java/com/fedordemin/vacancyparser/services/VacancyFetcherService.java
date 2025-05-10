@@ -1,6 +1,9 @@
 package com.fedordemin.vacancyparser.services;
 
 import com.fedordemin.vacancyparser.models.VacancyHhRu;
+import com.fedordemin.vacancyparser.models.VacancyResponseTrudVsem;
+import com.fedordemin.vacancyparser.services.converters.ConvertToEntityFromTrudVsemService;
+import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fedordemin.vacancyparser.models.VacancyResponseHhRu;
@@ -21,7 +24,9 @@ public class VacancyFetcherService {
     private static final Logger log = LoggerFactory.getLogger(VacancyFetcherService.class);
 
     private final HHApiService hhApiService;
-    private final ConverterToEntityService converterToEntityService;
+    private final ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
+    private final TrudVsemApiService trudVsemApiService;
+    private final ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService;
     private final VacancyRepo vacancyRepo;
 
     @Value("${app.hh.pages:5}")
@@ -32,10 +37,14 @@ public class VacancyFetcherService {
 
     @Autowired
     public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo,
-                                 ConverterToEntityService converterToEntityService) {
+                                 ConverterToEntityFromHhRuService converterToEntityFromHhRuService,
+                                 TrudVsemApiService trudVsemApiService,
+                                 ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService) {
         this.hhApiService = hhApiService;
         this.vacancyRepo = vacancyRepo;
-        this.converterToEntityService = converterToEntityService;
+        this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
+        this.trudVsemApiService = trudVsemApiService;
+        this.convertToEntityFromTrudVsemService = new ConvertToEntityFromTrudVsemService();
     }
 
     @Scheduled(cron = "0 */30 * * * ?")
@@ -44,48 +53,64 @@ public class VacancyFetcherService {
         log.info("Starting scheduled vacancy fetching");
         String defaultSearchText = "IT";
         String defaultArea = "1";
-        fetchVacancies(defaultSearchText, defaultArea);
+        String defaultSite = "hh.ru";
+        fetchVacancies(defaultSearchText, defaultArea, defaultSite);
     }
 
     @Transactional
-    public int fetchVacancies(String searchText, String area) {
+    public void fetchVacancies(String searchText, String area, String site) {
         List<VacancyEntity> entitiesToSave = new ArrayList<>();
-        int totalFetched = 0;
+        if (site.equalsIgnoreCase("hh.ru")) {
+            try {
+                for (int page = 0; page < pagesToFetch; page++) {
+                    log.info("Fetching page {} of vacancies", page);
+                    VacancyResponseHhRu response = hhApiService.searchVacancies(searchText, area, page, perPage);
+                    log.info("Searching vacancies for text " + searchText + " and area " + area);
+                    log.info(String.valueOf(response));
+                    if (response == null || response.getItems() == null || response.getItems().isEmpty()) {
+                        log.info("No more vacancies to fetch");
+                        break;
+                    }
 
-        try {
-            for (int page = 0; page < pagesToFetch; page++) {
-                log.info("Fetching page {} of vacancies", page);
-                VacancyResponseHhRu response = hhApiService.searchVacancies(searchText, area, page, perPage);
+                    List<VacancyEntity> pageEntities = new ArrayList<>();
+                    for (VacancyHhRu vacancyHhRu : response.getItems()) {
+                        pageEntities.add(converterToEntityFromHhRuService.convertEntityFromHhRu(vacancyHhRu));
+                    }
+                    entitiesToSave.addAll(pageEntities);
+
+                    if ((page + 1) >= response.getPages()) {
+                        break;
+                    }
+
+                    Thread.sleep(100);
+                }
+
+                if (!entitiesToSave.isEmpty()) {
+                    vacancyRepo.saveAll(entitiesToSave);
+                    log.info("Saved {} vacancies to database from HH.ru", entitiesToSave.size());
+                }
+            } catch (Exception e) {
+                log.error("Error fetching vacancies: {}", e.getMessage(), e);
+            }
+        } else if (site.equalsIgnoreCase("trudvsem.ru")) {
+            try {
                 log.info("Searching vacancies for text " + searchText + " and area " + area);
-                log.info(String.valueOf(response));
-                if (response == null || response.getItems() == null || response.getItems().isEmpty()) {
-                    log.info("No more vacancies to fetch");
-                    break;
+                VacancyResponseTrudVsem response = trudVsemApiService.searchVacancies(searchText, area);
+
+                for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
+                    entitiesToSave.add(
+                            convertToEntityFromTrudVsemService.convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy()));
                 }
 
-                List<VacancyEntity> pageEntities = new ArrayList<>();
-                for (VacancyHhRu vacancyHhRu : response.getItems()) {
-                    pageEntities.add(converterToEntityService.convertEntityFromHhRu(vacancyHhRu));
+                if (!entitiesToSave.isEmpty()) {
+                    vacancyRepo.saveAll(entitiesToSave);
+                    log.info("Saved {} vacancies to database from TrudVsem", entitiesToSave.size());
                 }
-
-                entitiesToSave.addAll(pageEntities);
-                totalFetched += pageEntities.size();
-
-                if ((page + 1) >= response.getPages()) {
-                    break;
-                }
-
-                Thread.sleep(100);
+            } catch (Exception e) {
+                log.error("Error fetching vacancies from TrudVsem: {}", e.getMessage());
             }
-
-            if (!entitiesToSave.isEmpty()) {
-                vacancyRepo.saveAll(entitiesToSave);
-                log.info("Saved {} vacancies to database", entitiesToSave.size());
-            }
-
-        } catch (Exception e) {
-            log.error("Error fetching vacancies: {}", e.getMessage(), e);
+        } else {
+            log.error("No such API");
         }
-        return totalFetched;
     }
 }

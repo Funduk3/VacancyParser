@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,12 +34,21 @@ public class HHApiService {
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<VacancyResponseHhRu> response = restTemplate.exchange(
-                builder.toUriString(),
-                HttpMethod.GET,
-                entity,
-                VacancyResponseHhRu.class
-        );
-        return response.getBody();
+        try {
+            ResponseEntity<VacancyResponseHhRu> response = restTemplate.exchange(
+                    builder.toUriString(),
+                    HttpMethod.GET,
+                    entity,
+                    VacancyResponseHhRu.class
+            );
+            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                return response.getBody();
+            } else {
+                log.error("Ошибка при запросе вакансий: HTTP {}", response.getStatusCode());
+            }
+        } catch (RestClientException e) {
+            log.error("Исключение при вызове API hh.ru", e);
+        }
+        return null;
     }
 }
