@@ -21,11 +21,11 @@ public class TrudVsemApiService {
     private static final String API_URL = "https://opendata.trudvsem.ru/api/v1/vacancies";
 
     @Autowired
-    public TrudVsemApiService(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public TrudVsemApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    public VacancyResponseTrudVsem searchVacancies(String text, String area) throws JsonProcessingException {
+    public VacancyResponseTrudVsem searchVacancies(String text, String area) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "VacancyParser/1.0");
 

@@ -44,7 +44,7 @@ public class VacancyFetcherService {
         this.vacancyRepo = vacancyRepo;
         this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
         this.trudVsemApiService = trudVsemApiService;
-        this.convertToEntityFromTrudVsemService = new ConvertToEntityFromTrudVsemService();
+        this.convertToEntityFromTrudVsemService = convertToEntityFromTrudVsemService;
     }
 
     @Scheduled(cron = "0 */30 * * * ?")
