@@ -94,8 +94,6 @@ public class VacancyFetcherService {
                     if ((page + 1) >= response.getPages()) {
                         break;
                     }
-
-                    Thread.sleep(100);
                 }
 
                 if (!entitiesToSave.isEmpty()) {

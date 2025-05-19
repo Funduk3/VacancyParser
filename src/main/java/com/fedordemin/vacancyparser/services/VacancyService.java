@@ -112,17 +112,14 @@ public class VacancyService {
                 case "csv" -> {
                     byte[] csv = CsvUtil.toCsvBytes(all);
                     Files.write(Paths.get(filename), csv);
-                    break;
                 }
                 case "json" -> {
                     byte[] json = JsonUtil.toJsonBytes(all);
                     Files.write(Paths.get(filename), json);
-                    break;
                 }
                 case "xlsx" -> {
                     byte[] xlsx = XlsxUtil.toXlsxBytes(all);
                     Files.write(Paths.get(filename), xlsx);
-                    break;
                 }
                 default -> {
                     return "No such type";

@@ -2,7 +2,6 @@ package com.fedordemin.vacancyparser.services;
 
 import com.fedordemin.vacancyparser.models.entities.LogEntity;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
-import org.jline.utils.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

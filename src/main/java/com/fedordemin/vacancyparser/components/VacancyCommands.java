@@ -1,6 +1,5 @@
 package com.fedordemin.vacancyparser.components;
 
-import com.fedordemin.vacancyparser.models.entities.LogEntity;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.services.*;
 import org.slf4j.Logger;
@@ -9,12 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
 
-import java.util.List;
-
 @ShellComponent
 public class VacancyCommands {
     private final VacancyService vacancyService;
-    private static final Logger log = LoggerFactory.getLogger(VacancyCommands.class);
 
     @Autowired
     public VacancyCommands(
