@@ -2,8 +2,6 @@ package com.fedordemin.vacancyparser.components;
 
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.services.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
