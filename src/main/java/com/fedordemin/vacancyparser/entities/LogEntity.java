@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.models.entities;
+package com.fedordemin.vacancyparser.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;

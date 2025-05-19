@@ -1,17 +1,22 @@
 package com.fedordemin.vacancyparser.utils;
 
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
+@Component
 public class XlsxUtil {
     private static Class<?> clazz = VacancyEntity.class;
-    public static byte[] toXlsxBytes(List<?> list) throws IOException {
+
+    public void toXlsxBytes(List<?> list, String filename) throws IOException {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
@@ -37,7 +42,7 @@ public class XlsxUtil {
                 }
             }
             workbook.write(out);
-            return out.toByteArray();
+            Files.write(Paths.get(filename), out.toByteArray());
         } catch (IllegalAccessException e) {
             throw new IOException("Ошибка рефлексии при формировании XLSX", e);
         }

@@ -2,13 +2,13 @@ package com.fedordemin.vacancyparser.services;
 
 import com.fedordemin.vacancyparser.models.VacancyHhRu;
 import com.fedordemin.vacancyparser.models.VacancyResponseTrudVsem;
-import com.fedordemin.vacancyparser.models.entities.LogEntity;
-import com.fedordemin.vacancyparser.services.converters.ConvertToEntityFromTrudVsemService;
+import com.fedordemin.vacancyparser.entities.LogEntity;
+import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromTrudVsemService;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fedordemin.vacancyparser.models.VacancyResponseHhRu;
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,27 +28,27 @@ public class VacancyFetcherService {
     private final HHApiService hhApiService;
     private final ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
     private final TrudVsemApiService trudVsemApiService;
-    private final ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService;
+    private final ConverterToEntityFromTrudVsemService converterToEntityFromTrudVsemService;
     private final HistoryWriterService historyWriterService;
     private final VacancyRepo vacancyRepo;
 
-    @Value("${app.hh.pages:5}")
+    @Value("${app.hh.pages:1}")
     private int pagesToFetch;
 
-    @Value("${app.hh.per-page:1}")
+    @Value("${app.hh.per-page:10}")
     private int perPage;
 
     @Autowired
     public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo,
                                  ConverterToEntityFromHhRuService converterToEntityFromHhRuService,
                                  TrudVsemApiService trudVsemApiService,
-                                 ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService,
+                                 ConverterToEntityFromTrudVsemService converterToEntityFromTrudVsemService,
                                  HistoryWriterService historyWriterService) {
         this.hhApiService = hhApiService;
         this.vacancyRepo = vacancyRepo;
         this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
         this.trudVsemApiService = trudVsemApiService;
-        this.convertToEntityFromTrudVsemService = convertToEntityFromTrudVsemService;
+        this.converterToEntityFromTrudVsemService = converterToEntityFromTrudVsemService;
         this.historyWriterService = historyWriterService;
     }
 
@@ -109,7 +109,7 @@ public class VacancyFetcherService {
                 VacancyResponseTrudVsem response = trudVsemApiService.searchVacancies(searchText, area);
 
                 for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
-                    VacancyEntity vacancyEntity = convertToEntityFromTrudVsemService.
+                    VacancyEntity vacancyEntity = converterToEntityFromTrudVsemService.
                             convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy());
 
                     entitiesToSave.add(vacancyEntity);

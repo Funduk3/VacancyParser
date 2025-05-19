@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.models.entities.*;
-import com.fedordemin.vacancyparser.repositories.HistoryRepo;
+import com.fedordemin.vacancyparser.entities.LogEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.utils.CsvUtil;
 import com.fedordemin.vacancyparser.utils.JsonUtil;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -24,19 +22,24 @@ import java.util.Optional;
 @Service
 public class VacancyService {
     private final VacancyRepo vacancyRepository;
-    private final HistoryRepo historyRepository;
     private final VacancyFetcherService vacancyFetcherService;
     private final FormatterService formatterService;
     private final HistoryWriterService historyWriterService;
+    private final CsvUtil csvUtil;
+    private final XlsxUtil xlsxUtil;
+    private final JsonUtil jsonUtil;
 
     @Autowired
-    public VacancyService(VacancyRepo vacancyRepository, HistoryRepo historyRepository, VacancyFetcherService vacancyFetcherService,
-                          FormatterService formatterService, HistoryWriterService historyWriterService) {
+    public VacancyService(VacancyRepo vacancyRepository, VacancyFetcherService vacancyFetcherService,
+                          FormatterService formatterService, HistoryWriterService historyWriterService,
+                          CsvUtil csvUtil, XlsxUtil xlsxUtil, JsonUtil jsonUtil) {
         this.vacancyRepository = vacancyRepository;
-        this.historyRepository = historyRepository;
         this.vacancyFetcherService = vacancyFetcherService;
         this.formatterService = formatterService;
         this.historyWriterService = historyWriterService;
+        this.csvUtil = csvUtil;
+        this.xlsxUtil = xlsxUtil;
+        this.jsonUtil = jsonUtil;
     }
 
     @Value("${app.pagination.default-size:10}")
@@ -68,10 +71,6 @@ public class VacancyService {
         return vacancyRepository.findAll();
     }
 
-    public List<LogEntity> getAllLogs() {
-        return historyRepository.findAll();
-    }
-
     public boolean deleteVacancy(String id) {
         Optional<VacancyEntity> vacancyOpt = vacancyRepository.findById(id);
         if (vacancyOpt.isPresent()) {
@@ -101,7 +100,7 @@ public class VacancyService {
     }
 
     public String formatHistory(String type) {
-        return formatterService.formatHistory(getAllLogs(), type);
+        return formatterService.formatHistory(historyWriterService.getAllLogs(), type);
     }
 
     public String export(String fileType, String filename) {
@@ -110,16 +109,13 @@ public class VacancyService {
             List<VacancyEntity> all = getAllVacancies();
             switch (fileType.toLowerCase()) {
                 case "csv" -> {
-                    byte[] csv = CsvUtil.toCsvBytes(all);
-                    Files.write(Paths.get(filename), csv);
+                    csvUtil.toCsvBytes(all, filename);
                 }
                 case "json" -> {
-                    byte[] json = JsonUtil.toJsonBytes(all);
-                    Files.write(Paths.get(filename), json);
+                    jsonUtil.toJsonBytes(all, filename);
                 }
                 case "xlsx" -> {
-                    byte[] xlsx = XlsxUtil.toXlsxBytes(all);
-                    Files.write(Paths.get(filename), xlsx);
+                    xlsxUtil.toXlsxBytes(all, filename);
                 }
                 default -> {
                     return "No such type";

@@ -1,15 +1,15 @@
 package com.fedordemin.vacancyparser.services.converters;
 
 import com.fedordemin.vacancyparser.models.VacancyHhRu;
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
+@Component
 public class ConverterToEntityFromHhRuService {
     private static final Logger log = LoggerFactory.getLogger(ConverterToEntityFromHhRuService.class);
 
@@ -50,16 +50,5 @@ public class ConverterToEntityFromHhRuService {
             log.warn("Error converting vacancy {}: {}", vacancyHhRu.getId(), e.getMessage());
             return null;
         }
-    }
-
-    public List<VacancyEntity> convertEntitiesFromHhRu(List<VacancyHhRu> vacancies) {
-        List<VacancyEntity> entities = new ArrayList<>();
-        for (VacancyHhRu vacancyHhRu : vacancies) {
-            VacancyEntity entity = convertEntityFromHhRu(vacancyHhRu);
-            if (entity != null) {
-                entities.add(entity);
-            }
-        }
-        return entities;
     }
 }

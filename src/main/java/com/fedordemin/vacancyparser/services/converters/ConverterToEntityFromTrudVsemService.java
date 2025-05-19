@@ -1,17 +1,14 @@
 package com.fedordemin.vacancyparser.services.converters;
 
 import com.fedordemin.vacancyparser.models.VacancyTrudVsem;
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Service
-public class ConvertToEntityFromTrudVsemService {
-    private static final Logger log = LoggerFactory.getLogger(ConvertToEntityFromTrudVsemService.class);
+@Component
+public class ConverterToEntityFromTrudVsemService {
+    private static final Logger log = LoggerFactory.getLogger(ConverterToEntityFromTrudVsemService.class);
 
     public VacancyEntity convertEntityFromTrudVsem(VacancyTrudVsem vacancyTrudVsem) {
         try {
@@ -45,16 +42,4 @@ public class ConvertToEntityFromTrudVsemService {
             return null;
         }
     }
-
-    public List<VacancyEntity> convertEntitiesFromTrudVsem(List<VacancyTrudVsem> vacancies) {
-        List<VacancyEntity> entities = new ArrayList<>();
-        for (VacancyTrudVsem vacancyTrudVsem : vacancies) {
-            VacancyEntity entity = convertEntityFromTrudVsem(vacancyTrudVsem);
-            if (entity != null) {
-                entities.add(entity);
-            }
-        }
-        return entities;
-    }
-
 }

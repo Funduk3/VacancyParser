@@ -202,3 +202,53 @@
 1746902539385:help
 1746902555038:fetch-vacancies --site trudvsem.ru
 1746902562980:fetch-vacancies -s trudvsem.ru
+1747049485244:help
+1747049522888:show-vacancies -t Python
+1747049538355:fetch-vacancies
+1747649831235:help
+1747649839557:show-vacancies
+1747649866914:help
+1747650020130:delete-vacancies -i 119778788
+1747650027270:help delete-vacancies
+1747650035140:help delete-vacancy
+1747650058259:delete-vacancy --id 119778788
+1747650280629:show-vacancy
+1747650285308:show-vacancies
+1747650350862:delete-vacancy --id 119905205
+1747650832298:show-vacancies
+1747650853447:delete-vacancy --id 119905205
+1747651556443:show-vacancies
+1747651571159:delete-vacancy --id 119778788
+1747652047679:show-vacancies
+1747652067124:delete-vacancy --id 119490866
+1747652370729:fetch-vacancies
+1747652519302:delete-vacancy --id 120697487
+1747652835074:show-vacancies
+1747652846426:delete-vacancy --id 120690791
+1747654882954:help
+1747654897293:show-vacancies
+1747657245939:help
+1747657252261:show-history
+1747657360372:fetch-vacancies
+1747657367113:show-history
+1747657729431:fetch-vacancies
+1747657883518:show-history
+1747658206713:help show-history
+1747658215672:show-history --type added
+1747658232853:delete-vacancy --id 120697258
+1747658244884:show-history --type deleted
+1747658379897:show-history --type -added
+1747658390373:show-history --type added
+1747663851292:help
+1747664664154:show-vacancies
+1747665708559:help fetch-vacancies
+1747665788391:fetch-vacancies --text Swift
+1747665797207:show-vacancies
+1747665838888:fetch-vacancies -s Kotlin
+1747665875247:fetch-vacancies -t Kotlin
+1747665916622:fetch-vacancies -s C++
+1747665922247:fetch-vacancies -t C++
+1747676460744:help
+1747676465198:show-vacancies
+1747676518629:delete-vacancies 120712522
+1747676523661:delete-vacancy 120712522

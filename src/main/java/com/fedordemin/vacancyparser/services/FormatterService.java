@@ -1,15 +1,15 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.models.entities.LogEntity;
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.LogEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
-@Service
+@Component
 public class FormatterService {
     public String formatResult(Page<VacancyEntity> page) {
         StringBuilder sb = new StringBuilder();

@@ -1,6 +1,6 @@
 package com.fedordemin.vacancyparser.components;
 
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

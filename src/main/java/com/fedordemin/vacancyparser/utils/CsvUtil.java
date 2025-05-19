@@ -1,17 +1,21 @@
 package com.fedordemin.vacancyparser.utils;
 
-import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
+@Component
 public class CsvUtil {
-    public static byte[] toCsvBytes(List<VacancyEntity> list) throws IOException {
+    public void toCsvBytes(List<VacancyEntity> list, String filename) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (CSVPrinter printer = new CSVPrinter(
                 new OutputStreamWriter(out, StandardCharsets.UTF_8),
@@ -25,7 +29,7 @@ public class CsvUtil {
                         v.getAlternate_url());
             }
         }
-        return out.toByteArray();
+        Files.write(Paths.get(filename), out.toByteArray());
     }
 }
 
