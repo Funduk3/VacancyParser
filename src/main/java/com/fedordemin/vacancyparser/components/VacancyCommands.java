@@ -1,5 +1,6 @@
 package com.fedordemin.vacancyparser.components;
 
+import com.fedordemin.vacancyparser.models.entities.LogEntity;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.services.*;
 import org.slf4j.Logger;
@@ -7,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
+
+import java.util.List;
 
 @ShellComponent
 public class VacancyCommands {
@@ -95,7 +98,6 @@ public class VacancyCommands {
                     defaultValue = "hh.ru"
             ) String site
     ) {
-        log.debug("Finding vacancies for : {}", searchText);
         vacancyService.fetchVacancies(searchText, area, site);
         return "Successfully fetched vacancies";
     }
@@ -121,5 +123,11 @@ public class VacancyCommands {
                                   defaultValue = "csv") String fileType,
                                 @ShellOption(defaultValue = "vacancies") String filename) {
         return vacancyService.export(fileType, filename);
+    }
+
+    @ShellMethod(value = "Show history of user's actions", key = "show-history")
+    public String showHistory(@ShellOption(value = {"-t", "--type"},
+    help = "Type of user's action: added/deleted", defaultValue = "all") String actionType) {
+        return vacancyService.formatHistory(actionType);
     }
 }

@@ -1,6 +1,7 @@
 package com.fedordemin.vacancyparser.services;
 
 import com.fedordemin.vacancyparser.models.entities.*;
+import com.fedordemin.vacancyparser.repositories.HistoryRepo;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.utils.CsvUtil;
 import com.fedordemin.vacancyparser.utils.JsonUtil;
@@ -16,21 +17,26 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class VacancyService {
-    private final VacancyRepo repository;
+    private final VacancyRepo vacancyRepository;
+    private final HistoryRepo historyRepository;
     private final VacancyFetcherService vacancyFetcherService;
     private final FormatterService formatterService;
+    private final HistoryWriterService historyWriterService;
 
     @Autowired
-    public VacancyService(VacancyRepo repository, VacancyFetcherService vacancyFetcherService,
-                          FormatterService formatterService) {
-        this.repository = repository;
+    public VacancyService(VacancyRepo vacancyRepository, HistoryRepo historyRepository, VacancyFetcherService vacancyFetcherService,
+                          FormatterService formatterService, HistoryWriterService historyWriterService) {
+        this.vacancyRepository = vacancyRepository;
+        this.historyRepository = historyRepository;
         this.vacancyFetcherService = vacancyFetcherService;
         this.formatterService = formatterService;
+        this.historyWriterService = historyWriterService;
     }
 
     @Value("${app.pagination.default-size:10}")
@@ -45,7 +51,7 @@ public class VacancyService {
             int size
     ) {
         int pageSize = size > 0 ? size : defaultPageSize;
-        return repository.search(
+        return vacancyRepository.search(
                 title,
                 company,
                 minSalary,
@@ -55,17 +61,27 @@ public class VacancyService {
     }
 
     public VacancyEntity getVacancy(String id) {
-        return repository.findById(id).orElse(null);
+        return vacancyRepository.findById(id).orElse(null);
     }
 
     public List<VacancyEntity> getAllVacancies() {
-        return repository.findAll();
+        return vacancyRepository.findAll();
+    }
+
+    public List<LogEntity> getAllLogs() {
+        return historyRepository.findAll();
     }
 
     public boolean deleteVacancy(String id) {
-        Optional<VacancyEntity> vacancyOpt = repository.findById(id);
+        Optional<VacancyEntity> vacancyOpt = vacancyRepository.findById(id);
         if (vacancyOpt.isPresent()) {
-            repository.deleteById(id);
+            LogEntity logEntity = new LogEntity();
+            logEntity.setVacancyId(id);
+            logEntity.setType("deleted");
+            logEntity.setTimestamp(LocalDateTime.now());
+            logEntity.setIsByUser(true);
+            historyWriterService.write(logEntity);
+            vacancyRepository.deleteById(id);
             return true;
         }
         return false;
@@ -73,7 +89,7 @@ public class VacancyService {
 
     @Transactional
     public void fetchVacancies(String searchText, String area, String site) {
-        vacancyFetcherService.fetchVacancies(searchText, area, site);
+        vacancyFetcherService.fetchVacancies(searchText, area, site, true);
     }
 
     public String formatResult(Page<VacancyEntity> page) {
@@ -82,6 +98,10 @@ public class VacancyService {
 
     public String formatVacancy(VacancyEntity vacancy) {
         return formatterService.formatVacancy(vacancy);
+    }
+
+    public String formatHistory(String type) {
+        return formatterService.formatHistory(getAllLogs(), type);
     }
 
     public String export(String fileType, String filename) {

@@ -1,10 +1,14 @@
 package com.fedordemin.vacancyparser.services;
 
+import com.fedordemin.vacancyparser.models.entities.LogEntity;
 import com.fedordemin.vacancyparser.models.entities.VacancyEntity;
+import org.jline.utils.Log;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class FormatterService {
@@ -42,6 +46,30 @@ public class FormatterService {
         sb.append(String.format("Url: %s\n",
                 vacancy.getAlternate_url() != null ? vacancy.getAlternate_url() : "N/A"));
 
+        return sb.toString();
+    }
+
+    public String formatLog(LogEntity logEntity, String type) {
+        if (logEntity.getIsByUser()) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("-----===-----\n");
+            sb.append(String.format("Vacancy: %s\n", logEntity.getVacancyId()));
+            if (Objects.equals(type, "all")) {
+                sb.append(String.format("Action: %s\n", logEntity.getType()));
+                sb.append(String.format("Date of action: %s\n", logEntity.getTimestamp()));
+                return sb.toString();
+            } else if (Objects.equals(type.toLowerCase(), logEntity.getType())) {
+                sb.append(String.format("Action: %s\n", logEntity.getType()));
+                sb.append(String.format("Date of action: %s\n", logEntity.getTimestamp()));
+                return sb.toString();
+            }
+        }
+        return "";
+    }
+
+    public String formatHistory(List<LogEntity> list, String type) {
+        StringBuilder sb = new StringBuilder();
+        list.forEach(v -> sb.append(formatLog(v, type)));
         return sb.toString();
     }
 }

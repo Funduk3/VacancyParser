@@ -2,6 +2,7 @@ package com.fedordemin.vacancyparser.services;
 
 import com.fedordemin.vacancyparser.models.VacancyHhRu;
 import com.fedordemin.vacancyparser.models.VacancyResponseTrudVsem;
+import com.fedordemin.vacancyparser.models.entities.LogEntity;
 import com.fedordemin.vacancyparser.services.converters.ConvertToEntityFromTrudVsemService;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,7 @@ public class VacancyFetcherService {
     private final ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
     private final TrudVsemApiService trudVsemApiService;
     private final ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService;
+    private final HistoryWriterService historyWriterService;
     private final VacancyRepo vacancyRepo;
 
     @Value("${app.hh.pages:5}")
@@ -39,12 +42,14 @@ public class VacancyFetcherService {
     public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo,
                                  ConverterToEntityFromHhRuService converterToEntityFromHhRuService,
                                  TrudVsemApiService trudVsemApiService,
-                                 ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService) {
+                                 ConvertToEntityFromTrudVsemService convertToEntityFromTrudVsemService,
+                                 HistoryWriterService historyWriterService) {
         this.hhApiService = hhApiService;
         this.vacancyRepo = vacancyRepo;
         this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
         this.trudVsemApiService = trudVsemApiService;
         this.convertToEntityFromTrudVsemService = convertToEntityFromTrudVsemService;
+        this.historyWriterService = historyWriterService;
     }
 
     @Scheduled(cron = "0 */30 * * * ?")
@@ -54,11 +59,11 @@ public class VacancyFetcherService {
         String defaultSearchText = "IT";
         String defaultArea = "1";
         String defaultSite = "hh.ru";
-        fetchVacancies(defaultSearchText, defaultArea, defaultSite);
+        fetchVacancies(defaultSearchText, defaultArea, defaultSite, false);
     }
 
     @Transactional
-    public void fetchVacancies(String searchText, String area, String site) {
+    public void fetchVacancies(String searchText, String area, String site, Boolean isByUser) {
         List<VacancyEntity> entitiesToSave = new ArrayList<>();
         if (site.equalsIgnoreCase("hh.ru")) {
             try {
@@ -74,7 +79,15 @@ public class VacancyFetcherService {
 
                     List<VacancyEntity> pageEntities = new ArrayList<>();
                     for (VacancyHhRu vacancyHhRu : response.getItems()) {
-                        pageEntities.add(converterToEntityFromHhRuService.convertEntityFromHhRu(vacancyHhRu));
+                        VacancyEntity vacancyEntity = converterToEntityFromHhRuService.
+                                convertEntityFromHhRu(vacancyHhRu);
+                        pageEntities.add(vacancyEntity);
+                        LogEntity logEntity = new LogEntity();
+                        logEntity.setVacancyId(vacancyEntity.getId());
+                        logEntity.setType("added");
+                        logEntity.setTimestamp(LocalDateTime.now());
+                        logEntity.setIsByUser(isByUser);
+                        historyWriterService.write(logEntity);
                     }
                     entitiesToSave.addAll(pageEntities);
 
@@ -98,8 +111,16 @@ public class VacancyFetcherService {
                 VacancyResponseTrudVsem response = trudVsemApiService.searchVacancies(searchText, area);
 
                 for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
-                    entitiesToSave.add(
-                            convertToEntityFromTrudVsemService.convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy()));
+                    VacancyEntity vacancyEntity = convertToEntityFromTrudVsemService.
+                            convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy());
+
+                    entitiesToSave.add(vacancyEntity);
+                    LogEntity logEntity = new LogEntity();
+                    logEntity.setVacancyId(vacancyEntity.getId());
+                    logEntity.setType("added");
+                    logEntity.setTimestamp(LocalDateTime.now());
+                    logEntity.setIsByUser(isByUser);
+                    historyWriterService.write(logEntity);
                 }
 
                 if (!entitiesToSave.isEmpty()) {
