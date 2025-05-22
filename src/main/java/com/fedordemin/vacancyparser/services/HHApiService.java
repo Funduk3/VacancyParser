@@ -22,12 +22,13 @@ public class HHApiService {
         this.restTemplate = restTemplate;
     }
 
-    public VacancyResponseHhRu searchVacancies(String text, String area, int page, int perPage) {
+    public VacancyResponseHhRu searchVacancies(String text, String company, String area, int page, int perPage) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "VacancyParser/1.0");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("text", text)
+                .queryParam("company", company)
                 .queryParam("area", area)
                 .queryParam("page", page)
                 .queryParam("per_page", perPage);

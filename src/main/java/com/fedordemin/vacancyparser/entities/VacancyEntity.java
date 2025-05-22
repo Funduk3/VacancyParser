@@ -9,7 +9,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "vacancies")
 @Data
 public class VacancyEntity {
     @Id

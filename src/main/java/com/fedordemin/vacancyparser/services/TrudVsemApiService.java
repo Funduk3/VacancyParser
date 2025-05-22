@@ -23,12 +23,13 @@ public class TrudVsemApiService {
         this.restTemplate = restTemplate;
     }
 
-    public VacancyResponseTrudVsem searchVacancies(String text, String area) {
+    public VacancyResponseTrudVsem searchVacancies(String text, String company, String area) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "VacancyParser/1.0");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(API_URL)
                 .queryParam("text", text)
+                .queryParam("company", company)
                 .queryParam("area", area)
                 .queryParam("limit", 10);
 

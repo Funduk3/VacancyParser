@@ -66,7 +66,7 @@ public class VacancyFetcherService {
     }
 
     public List<VacancyEntity> fetchHhRu(String searchText, String company,
-                                         String area, String site, Boolean isByUser) {
+                                         String area, Boolean isByUser) {
         List<VacancyEntity> entitiesReceived = new ArrayList<>();
         for (int page = 0; page < pagesToFetch; page++) {
             log.info("Fetching page {} of vacancies", page);
@@ -102,7 +102,7 @@ public class VacancyFetcherService {
         return entitiesReceived;
     }
 
-    public List<VacancyEntity> fetchTrudVsemApi(String searchText, String company, String area, String site,
+    public List<VacancyEntity> fetchTrudVsemApi(String searchText, String company, String area,
                                                 Boolean isByUser) {
         List<VacancyEntity> entitiesReceived = new ArrayList<>();
         VacancyResponseTrudVsem response = trudVsemApiService.searchVacancies(searchText, company, area);
@@ -111,12 +111,12 @@ public class VacancyFetcherService {
             VacancyEntity vacancyEntity = converterToEntityFromTrudVsemService.
                     convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy());
             entitiesReceived.add(vacancyEntity);
-            saveToHistory(isByUser, entitiesReceived, vacancyEntity);
+            saveToHistory(isByUser, vacancyEntity);
         }
         return entitiesReceived;
     }
 
-    private void saveToHistory(Boolean isByUser, List<VacancyEntity> entitiesReceived, VacancyEntity vacancyEntity) {
+    private void saveToHistory(Boolean isByUser, VacancyEntity vacancyEntity) {
         LogEntity logEntity = new LogEntity();
         logEntity.setVacancyId(vacancyEntity.getId());
         logEntity.setType("added");
