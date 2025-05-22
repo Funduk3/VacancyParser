@@ -90,7 +90,7 @@ public class VacancyFetcherService {
                 }
                 if (!isDuplicate) {
                     entitiesReceived.add(vacancyEntity);
-                    saveToHistory(isByUser, pageEntities, vacancyEntity);
+                    saveToHistory(isByUser, vacancyEntity);
                 }
             }
             entitiesReceived.addAll(pageEntities);
@@ -129,9 +129,9 @@ public class VacancyFetcherService {
     public void fetchVacancies(String searchText, String company, String area, String site, Boolean isByUser) {
         List<VacancyEntity> entitiesToSave = new ArrayList<>();
         if (site.equalsIgnoreCase("hh.ru")) {
-            entitiesToSave = fetchHhRu(searchText, company, area, site, isByUser);
+            entitiesToSave = fetchHhRu(searchText, company, area, isByUser);
         } else if (site.equalsIgnoreCase("trudvsem.ru")) {
-            entitiesToSave = fetchTrudVsemApi(searchText, company, area, site, isByUser);
+            entitiesToSave = fetchTrudVsemApi(searchText, company, area, isByUser);
         }
         if (!entitiesToSave.isEmpty()) {
             vacancyRepo.saveAll(entitiesToSave);
