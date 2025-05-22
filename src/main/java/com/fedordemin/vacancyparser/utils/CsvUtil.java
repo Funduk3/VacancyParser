@@ -24,7 +24,7 @@ public class CsvUtil {
                         "Experience", "Url"))) {
             for (VacancyEntity v : list) {
                 printer.printRecord(v.getId(), v.getName(), v.getSalaryFrom(), v.getSalaryTo(),
-                        v.getEmployerName(), v.getDescription(), v.getCity(), v.getPublishedAt(),
+                        v.getEmployerName(), v.getDescription(), v.getCity(), v.getPublished_at(),
                         v.getRequirements(), v.getScheduleName(), v.getExperienceName(),
                         v.getAlternate_url());
             }

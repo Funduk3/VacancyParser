@@ -6,6 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
 
+import java.util.List;
+import java.util.Scanner;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 @ShellComponent
 public class VacancyCommands {
     private final VacancyService vacancyService;
@@ -35,31 +41,31 @@ public class VacancyCommands {
                     help = "Job title filter",
                     defaultValue = ShellOption.NULL
             ) String title,
-
             @ShellOption(
                     value = {"-c", "--company"},
                     help = "Company name filter",
                     defaultValue = ShellOption.NULL
             ) String company,
-
             @ShellOption(
                     value = {"-min", "--min-salary"},
                     help = "Minimum salary",
                     defaultValue = ShellOption.NULL
             ) Integer minSalary,
-
             @ShellOption(
                     value = {"-max", "--max-salary"},
                     help = "Maximum salary",
                     defaultValue = ShellOption.NULL
             ) Integer maxSalary,
-
+            @ShellOption(
+                    value = {"-a", "--area"},
+                    help = "Area of vacancy",
+                    defaultValue = ShellOption.NULL
+            ) String area,
             @ShellOption(
                     value = {"-p", "--page"},
                     help = "Page number",
                     defaultValue = "0"
             ) int page,
-
             @ShellOption(
                     value = {"-s", "--size"},
                     help = "Items per page",
@@ -67,7 +73,7 @@ public class VacancyCommands {
             ) int size
     ) {
         Page<VacancyEntity> result = vacancyService.getVacancies(
-                title, company, minSalary, maxSalary, page, size
+                title, company, minSalary, maxSalary, area, page, size
         );
 
         return vacancyService.formatResult(result);
@@ -76,11 +82,14 @@ public class VacancyCommands {
     @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from various API")
     public String fetchVacancies(
             @ShellOption(
-                    value = {"-t", "--text"},
+                    value = {"-t", "--title"},
                     help = "Search text",
                     defaultValue = "Developer"
             ) String searchText,
-
+            @ShellOption(
+                    value = {"-c", "--company"},
+                    help = "Company name"
+            ) String company,
             @ShellOption(
                     value = {"-a", "--area"},
                     help = "Area code (1 - Moscow, 2 - St. Petersburg)",
@@ -88,11 +97,11 @@ public class VacancyCommands {
             ) String area,
             @ShellOption(
                     value = {"-s", "-website"},
-                    help = "Website to find data (hh.ru, trudvsem.ru)",
+                    help = "Website to find data from (hh.ru, trudvsem.ru)",
                     defaultValue = "hh.ru"
             ) String site
     ) {
-        vacancyService.fetchVacancies(searchText, area, site);
+        vacancyService.fetchVacancies(searchText, company, area, site);
         return "Successfully fetched vacancies";
     }
 
@@ -123,5 +132,44 @@ public class VacancyCommands {
     public String showHistory(@ShellOption(value = {"-t", "--type"},
     help = "Type of user's action: added/deleted", defaultValue = "all") String actionType) {
         return vacancyService.formatHistory(actionType);
+    }
+
+    @ShellMethod(value = "Will send notification if a vacancy appears", key = "set-criteria")
+    public String sendNotification(
+            @ShellOption(value = {"-t", "--title"}, help = "Job title",
+                    defaultValue = ShellOption.NULL) String title,
+            @ShellOption(value = {"-c", "--company"}, help = "Company name",
+                    defaultValue = ShellOption.NULL) String company,
+            @ShellOption(value = {"-min", "--min-salary"}, help = "Minimum salary",
+                    defaultValue = ShellOption.NULL) Integer minSalary,
+            @ShellOption(value = {"-max", "--max-salary"}, help = "Maximum salary",
+                    defaultValue = ShellOption.NULL) Integer maxSalary,
+            @ShellOption(value = {"-a", "--area"}, help = "Area of vacancy",
+                    defaultValue = ShellOption.NULL) String area) {
+
+        int size = 5;
+        Page<VacancyEntity> initialPage = vacancyService.getVacancies(title, company,
+                minSalary, maxSalary, area, 0, size);
+        String output = vacancyService.formatResult(initialPage);
+        System.out.println("Эти вакансии уже есть в базе:\n" + output);
+
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                Page<VacancyEntity> currentPage = vacancyService.getVacancies(title, company,
+                        minSalary, maxSalary, area, 0, size + 1);
+                if (currentPage.getContent().size() > initialPage.getContent().size()) {
+                    System.out.println("Новая вакансия найдена!");
+                    System.out.println(vacancyService.formatVacancy(
+                            currentPage.getContent().getLast()));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                scheduler.shutdown();
+            }
+        }, 0, 30, TimeUnit.SECONDS);
+
+        return "Фоновый поиск вакансий запущен";
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class HistoryWriterService {
@@ -18,6 +19,11 @@ public class HistoryWriterService {
 
     public List<LogEntity> getAllLogs() {
         return historyRepo.findAll();
+    }
+
+    public LogEntity getLogById(String id) {
+        Optional<LogEntity> log = historyRepo.findById(id);
+        return log.orElse(null);
     }
 
     public void write(LogEntity logEntity) {

@@ -30,7 +30,7 @@ public class VacancyEntity {
     private String city;
     private String street;
 
-    private LocalDateTime publishedAt;
+    private LocalDateTime published_at;
     @Column(columnDefinition = "TEXT")
     private String requirements;
     private String scheduleName;

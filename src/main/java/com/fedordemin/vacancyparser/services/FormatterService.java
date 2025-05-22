@@ -38,8 +38,8 @@ public class FormatterService {
                 vacancy.getRequirements() != null ? vacancy.getRequirements() : "N/A"));
 
         sb.append(String.format("Published: %s\n",
-                vacancy.getPublishedAt() != null ?
-                        vacancy.getPublishedAt().format(DateTimeFormatter.ISO_LOCAL_DATE) :
+                vacancy.getPublished_at() != null ?
+                        vacancy.getPublished_at().format(DateTimeFormatter.ISO_LOCAL_DATE) :
                         "N/A"
         ));
         sb.append(String.format("Url: %s\n",

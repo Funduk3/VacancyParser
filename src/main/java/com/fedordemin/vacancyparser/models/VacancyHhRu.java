@@ -17,7 +17,7 @@ public class VacancyHhRu {
     private String description;
     private Address address;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssZ")
-    private LocalDateTime publishedAt;
+    private LocalDateTime published_at;
 
     @JsonProperty("alternate_url")
     private String url;

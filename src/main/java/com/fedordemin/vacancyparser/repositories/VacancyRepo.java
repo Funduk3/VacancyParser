@@ -13,6 +13,7 @@ public interface VacancyRepo extends JpaRepository<VacancyEntity, String> {
 
     @Query("SELECT v FROM VacancyEntity v WHERE " +
             "(COALESCE(:title, '') = '' OR LOWER(v.name) LIKE LOWER(CONCAT('%', :title, '%'))) AND " +
+            "(COALESCE(:area, '') = '' OR LOWER(v.name) LIKE LOWER(CONCAT('%', :area, '%'))) AND " +
             "(COALESCE(:company, '') = '' OR LOWER(v.employerName) LIKE LOWER(CONCAT('%', :company, '%'))) AND " +
             "(:minSalary IS NULL OR v.salaryFrom >= :minSalary) AND " +
             "(:maxSalary IS NULL OR v.salaryTo <= :maxSalary)")
@@ -21,6 +22,7 @@ public interface VacancyRepo extends JpaRepository<VacancyEntity, String> {
             @Param("company") String company,
             @Param("minSalary") Integer minSalary,
             @Param("maxSalary") Integer maxSalary,
+            @Param("area") String area,
             Pageable pageable
     );
 }

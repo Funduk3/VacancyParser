@@ -6,9 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Component
 public class ConverterToEntityFromHhRuService {
     private static final Logger log = LoggerFactory.getLogger(ConverterToEntityFromHhRuService.class);
@@ -40,9 +37,10 @@ public class ConverterToEntityFromHhRuService {
                 entity.setExperienceName(vacancyHhRu.getExperience().getName());
             }
             if (vacancyHhRu.getSnippet() != null) {
-                entity.setRequirements(vacancyHhRu.getSnippet().getRequirement());
+                entity.setRequirements(vacancyHhRu.getSnippet().getRequirement()
+                        .replaceAll("<[^>]*>", ""));
             }
-            entity.setPublishedAt(vacancyHhRu.getPublishedAt());
+            entity.setPublished_at(vacancyHhRu.getPublished_at());
             entity.setDescription(vacancyHhRu.getDescription());
 
             return entity;

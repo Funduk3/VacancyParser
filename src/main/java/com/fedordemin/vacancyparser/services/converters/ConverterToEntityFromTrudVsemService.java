@@ -15,7 +15,7 @@ public class ConverterToEntityFromTrudVsemService {
             VacancyEntity entity = new VacancyEntity();
             entity.setId(vacancyTrudVsem.getId());
             entity.setName(vacancyTrudVsem.getName());
-            entity.setPublishedAt(vacancyTrudVsem.getCreationDate().atStartOfDay());
+            entity.setPublished_at(vacancyTrudVsem.getCreationDate().atStartOfDay());
             entity.setSalaryFrom(vacancyTrudVsem.getSalary_min());
             entity.setSalaryTo(vacancyTrudVsem.getSalary_max());
             entity.setRequirements(vacancyTrudVsem.getDuty());
@@ -33,7 +33,8 @@ public class ConverterToEntityFromTrudVsemService {
                 entity.setCity(vacancyTrudVsem.getAddress().getLocation());
             }
             if (vacancyTrudVsem.getRequirement() != null) {
-                entity.setExperienceName(vacancyTrudVsem.getRequirement().getExperience().toString());
+                entity.setExperienceName(vacancyTrudVsem.getRequirement().getExperience().toString()
+                        .replaceAll("<[^>]*>", ""));
             }
 
             return entity;

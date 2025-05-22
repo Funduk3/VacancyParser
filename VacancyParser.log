@@ -252,3 +252,61 @@
 1747676465198:show-vacancies
 1747676518629:delete-vacancies 120712522
 1747676523661:delete-vacancy 120712522
+1747762592074:fetch-vacancies -t Swift
+1747767212610:set-criteria
+1747822673567:help
+1747822688764:help set-criteria
+1747822713457:set-criteria --title Swift --company Азбука Вкуса
+1747822795723:set-criteria --title IOS --company Азбука вкуса
+1747822895339:set-criteria --company Азбука
+1747822916447:show-vacancies --company Азбуква
+1747823066236:show-vacancies --company
+1747823069897:show-vacancies
+1747823091096:help
+1747823119920:fetch-vacancies
+1747823126725:show-vacancies
+1747823691714:set-criteria --company Drivee
+1747823768433:show-vacancies --company Drivee
+1747823832955:set-criteria --company Drivee
+1747824683577:help
+1747824696741:fetch-vacancies --title Kotlin
+1747824704366:fetch-vacancies --help
+1747824896888:fetch-vacancies --title Kotlin
+1747824907930:set-criteria --title Kotlin
+1747838492891:help
+1747838504627:set-criteria --company Азбука Вкуса
+1747838554879:help
+1747838565487:set-criteria --company Азбука вкуса
+1747838571943:no
+1747838581347:set-criteria --company Азбука вкуса
+1747838756422:help
+1747838764473:set-criteria --company Азбука
+1747838780118:fetch-vacancies --help
+1747838801602:fetch-vacancies --title Азбука
+1747838822373:fetch-vacancies --title Ios
+1747838833621:show-vacancie
+1747838836804:show-vacancies
+1747838854714:show-vacancies --company Альфа
+1747915908616:help
+1747915918507:history
+1747915924568:help
+1747915936176:set-criteria --help
+1747915967898:set-criteria --title ios --company Азбука
+1747938472855:help
+1747938483441:fetch-vacancies --title Android
+1747938490052:show-vacancies
+1747938731481:fetch-vacancies --title Android
+1747938735519:show-vacancies
+1747940754938:help
+1747940759719:show-history
+1747941593305:show-vacancies
+1747941638590:set-criteria --company Азбука
+1747941656621:fetch-vacancies --company Азбука
+1747941670412:fetch-vacancies --title Ios
+1747941676249:show-vacancies
+1747941699771:fetch-vacancies --help
+1747942105993:show-vacancies
+1747942117542:fetch-vacancies --company Азбука
+1747942184778:show-vacancies --company Азбука
+1747942191057:show-vacancies --company
+1747942210427:show-vacancies -p 2

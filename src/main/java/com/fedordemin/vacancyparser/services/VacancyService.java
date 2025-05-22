@@ -50,6 +50,7 @@ public class VacancyService {
             String company,
             Integer minSalary,
             Integer maxSalary,
+            String area,
             int page,
             int size
     ) {
@@ -59,7 +60,8 @@ public class VacancyService {
                 company,
                 minSalary,
                 maxSalary,
-                PageRequest.of(page, pageSize, Sort.by("publishedAt").descending())
+                area,
+                PageRequest.of(page, pageSize, Sort.by("published_at").descending())
         );
     }
 
@@ -87,8 +89,8 @@ public class VacancyService {
     }
 
     @Transactional
-    public void fetchVacancies(String searchText, String area, String site) {
-        vacancyFetcherService.fetchVacancies(searchText, area, site, true);
+    public void fetchVacancies(String searchText, String company, String area, String site) {
+        vacancyFetcherService.fetchVacancies(searchText, company, area, site, true);
     }
 
     public String formatResult(Page<VacancyEntity> page) {
@@ -108,18 +110,10 @@ public class VacancyService {
             filename += "." + fileType;
             List<VacancyEntity> all = getAllVacancies();
             switch (fileType.toLowerCase()) {
-                case "csv" -> {
-                    csvUtil.toCsvBytes(all, filename);
-                }
-                case "json" -> {
-                    jsonUtil.toJsonBytes(all, filename);
-                }
-                case "xlsx" -> {
-                    xlsxUtil.toXlsxBytes(all, filename);
-                }
-                default -> {
-                    return "No such type";
-                }
+                case "csv" -> csvUtil.toCsvBytes(all, filename);
+                case "json" -> jsonUtil.toJsonBytes(all, filename);
+                case "xlsx" -> xlsxUtil.toXlsxBytes(all, filename);
+                default -> {return "No such type";}
             }
             return "Export completed: " + filename;
         } catch (IOException e) {
