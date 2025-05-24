@@ -1,13 +1,9 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.models.VacancyHhRu;
-import com.fedordemin.vacancyparser.models.VacancyResponseTrudVsem;
-import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromTrudVsemService;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.fedordemin.vacancyparser.models.VacancyResponseHhRu;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import org.slf4j.Logger;
@@ -56,82 +52,19 @@ public class VacancyFetcherService {
 
     @Scheduled(cron = "0 */30 * * * ?")
     @Transactional
-    public void scheduledFetchVacancies() {
+    public void scheduledFetchVacancies() throws Exception {
         log.info("Starting scheduled vacancy fetching");
-        String defaultSearchText = "IT";
-        String defaultCompany = null;
-        String defaultArea = "1";
         String defaultSite = "hh.ru";
-        fetchVacancies(defaultSearchText, defaultCompany, defaultArea, defaultSite, false);
-    }
-
-    public List<VacancyEntity> fetchHhRu(String searchText, String company,
-                                         String area, Boolean isByUser) {
-        List<VacancyEntity> entitiesReceived = new ArrayList<>();
-        for (int page = 0; page < pagesToFetch; page++) {
-            log.info("Fetching page {} of vacancies", page);
-            VacancyResponseHhRu response = hhApiService.searchVacancies(searchText, company, area, page, perPage);
-            log.info(String.valueOf(response));
-            if (response == null || response.getItems() == null || response.getItems().isEmpty()) {
-                log.info("No more vacancies to fetch");
-                break;
-            }
-
-            List<VacancyEntity> pageEntities = new ArrayList<>();
-            for (VacancyHhRu vacancyHhRu : response.getItems()) {
-                VacancyEntity vacancyEntity = converterToEntityFromHhRuService.
-                        convertEntityFromHhRu(vacancyHhRu);
-                boolean isDuplicate = false;
-                for (VacancyEntity entity : entitiesReceived) {
-                    if (vacancyComparator.isDuplicate(vacancyEntity, entity)) {
-                        isDuplicate = true;
-                        break;
-                    }
-                }
-                if (!isDuplicate) {
-                    entitiesReceived.add(vacancyEntity);
-                    saveToHistory(isByUser, vacancyEntity);
-                }
-            }
-            entitiesReceived.addAll(pageEntities);
-
-            if ((page + 1) >= response.getPages()) {
-                break;
-            }
-        }
-        return entitiesReceived;
-    }
-
-    public List<VacancyEntity> fetchTrudVsemApi(String searchText, String company, String area,
-                                                Boolean isByUser) {
-        List<VacancyEntity> entitiesReceived = new ArrayList<>();
-        VacancyResponseTrudVsem response = trudVsemApiService.searchVacancies(searchText, company, area);
-
-        for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
-            VacancyEntity vacancyEntity = converterToEntityFromTrudVsemService.
-                    convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy());
-            entitiesReceived.add(vacancyEntity);
-            saveToHistory(isByUser, vacancyEntity);
-        }
-        return entitiesReceived;
-    }
-
-    private void saveToHistory(Boolean isByUser, VacancyEntity vacancyEntity) {
-        LogEntity logEntity = new LogEntity();
-        logEntity.setVacancyId(vacancyEntity.getId());
-        logEntity.setType("added");
-        logEntity.setTimestamp(LocalDateTime.now());
-        logEntity.setIsByUser(isByUser);
-        historyWriterService.write(logEntity);
+        fetchVacancies(null, null, null, defaultSite, false);
     }
 
     @Transactional
-    public void fetchVacancies(String searchText, String company, String area, String site, Boolean isByUser) {
+    public void fetchVacancies(String searchText, String company_name, String area, String site, Boolean isByUser) {
         List<VacancyEntity> entitiesToSave = new ArrayList<>();
         if (site.equalsIgnoreCase("hh.ru")) {
-            entitiesToSave = fetchHhRu(searchText, company, area, isByUser);
+            entitiesToSave = hhApiService.fetchHhRu(searchText, company_name, area, isByUser, pagesToFetch, perPage);
         } else if (site.equalsIgnoreCase("trudvsem.ru")) {
-            entitiesToSave = fetchTrudVsemApi(searchText, company, area, isByUser);
+            entitiesToSave = trudVsemApiService.fetchTrudVsemApi(searchText, area, isByUser);
         }
         if (!entitiesToSave.isEmpty()) {
             vacancyRepo.saveAll(entitiesToSave);

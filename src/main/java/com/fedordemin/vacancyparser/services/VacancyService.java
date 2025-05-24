@@ -3,14 +3,12 @@ package com.fedordemin.vacancyparser.services;
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
-import com.fedordemin.vacancyparser.utils.CsvUtil;
-import com.fedordemin.vacancyparser.utils.JsonUtil;
-import com.fedordemin.vacancyparser.utils.XlsxUtil;
+import com.fedordemin.vacancyparser.utils.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +19,7 @@ import java.util.Optional;
 
 @Service
 public class VacancyService {
+    private static final Logger log = LoggerFactory.getLogger(VacancyService.class);
     private final VacancyRepo vacancyRepository;
     private final VacancyFetcherService vacancyFetcherService;
     private final FormatterService formatterService;
@@ -76,11 +75,12 @@ public class VacancyService {
     public boolean deleteVacancy(String id) {
         Optional<VacancyEntity> vacancyOpt = vacancyRepository.findById(id);
         if (vacancyOpt.isPresent()) {
-            LogEntity logEntity = new LogEntity();
-            logEntity.setVacancyId(id);
-            logEntity.setType("deleted");
-            logEntity.setTimestamp(LocalDateTime.now());
-            logEntity.setIsByUser(true);
+            LogEntity logEntity = LogEntity.builder()
+                    .vacancyId(id)
+                    .type("deleted")
+                    .isByUser(true)
+                    .timestamp(LocalDateTime.now())
+                    .build();
             historyWriterService.write(logEntity);
             vacancyRepository.deleteById(id);
             return true;
@@ -89,8 +89,8 @@ public class VacancyService {
     }
 
     @Transactional
-    public void fetchVacancies(String searchText, String company, String area, String site) {
-        vacancyFetcherService.fetchVacancies(searchText, company, area, site, true);
+    public void fetchVacancies(String searchText, String company_name, String area, String site) throws Exception {
+        vacancyFetcherService.fetchVacancies(searchText, company_name, area, site, true);
     }
 
     public String formatResult(Page<VacancyEntity> page) {

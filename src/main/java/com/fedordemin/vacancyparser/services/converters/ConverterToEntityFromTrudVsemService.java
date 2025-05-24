@@ -12,31 +12,21 @@ public class ConverterToEntityFromTrudVsemService {
 
     public VacancyEntity convertEntityFromTrudVsem(VacancyTrudVsem vacancyTrudVsem) {
         try {
-            VacancyEntity entity = new VacancyEntity();
-            entity.setId(vacancyTrudVsem.getId());
-            entity.setName(vacancyTrudVsem.getName());
-            entity.setPublished_at(vacancyTrudVsem.getCreationDate().atStartOfDay());
-            entity.setSalaryFrom(vacancyTrudVsem.getSalary_min());
-            entity.setSalaryTo(vacancyTrudVsem.getSalary_max());
-            entity.setRequirements(vacancyTrudVsem.getDuty());
-            entity.setScheduleName(vacancyTrudVsem.getEmployment());
-            entity.setAlternate_url(vacancyTrudVsem.getUrl());
-
-            if (vacancyTrudVsem.getCompany() != null) {
-                entity.setEmployerId(vacancyTrudVsem.getCompany().getId());
-                entity.setEmployerName(vacancyTrudVsem.getCompany().getName());
-            }
-            if (vacancyTrudVsem.getCategory() != null) {
-                //
-            }
-            if (vacancyTrudVsem.getAddress() != null) {
-                entity.setCity(vacancyTrudVsem.getAddress().getLocation());
-            }
-            if (vacancyTrudVsem.getRequirement() != null) {
-                entity.setExperienceName(vacancyTrudVsem.getRequirement().getExperience().toString()
-                        .replaceAll("<[^>]*>", ""));
-            }
-
+            log.error(vacancyTrudVsem.toString());
+            VacancyEntity entity = VacancyEntity.builder()
+                    .id(vacancyTrudVsem.getId())
+                    .name(vacancyTrudVsem.getName())
+                    .published_at(vacancyTrudVsem.getCreationDate().atStartOfDay())
+                    .salaryFrom(vacancyTrudVsem.getSalary_min())
+                    .salaryTo(vacancyTrudVsem.getSalary_max())
+                    .requirements(vacancyTrudVsem.getDuty())
+                    .experienceName(String.valueOf(vacancyTrudVsem.getRequirement().getExperience()))
+                    .scheduleName(vacancyTrudVsem.getEmployment())
+                    .alternate_url(vacancyTrudVsem.getUrl())
+                    .employerId(vacancyTrudVsem.getCompany() != null ? vacancyTrudVsem.getCompany().getId() : null)
+                    .employerName(vacancyTrudVsem.getCompany() != null ? vacancyTrudVsem.getCompany().getName() : null)
+                    .city(vacancyTrudVsem.getAddress() != null ? vacancyTrudVsem.getAddress().getLocation() : null)
+                    .build();
             return entity;
         } catch (Exception e) {
             log.warn("Error converting vacancy {}: {}", vacancyTrudVsem.getId(), e.getMessage());

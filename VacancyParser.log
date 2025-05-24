@@ -310,3 +310,54 @@
 1747942184778:show-vacancies --company Азбука
 1747942191057:show-vacancies --company
 1747942210427:show-vacancies -p 2
+1747982989494:help
+1747989196988:show-vacancies
+1747989214258:fetch-vacancies
+1747989437530:help
+1747989442055:show-vacancies
+1747989449264:fetch-vacancies
+1747990431749:show-vacanceis
+1747990434592:show-vacancies
+1747990442004:fetch-vacancies
+1747990448142:show-vacancies
+1747990493556:fetch-vacancies --company Сбер
+1747990504274:show-vacancies --company Сбер
+1747991584765:show-vacancies
+1747991605350:fetch-vacancies --company Сбер
+1747994830232:help
+1747994836045:show-vacancies
+1747994850084:fetch-vacancies --company Сбер
+1747995088004:fetch-vacancies
+1747995101179:fetch-vacancies --company Сбер
+1747995543055:fetch-vacancies --company Яндекс
+1747996076330:fetch-vacancies
+1747996236676:stacktrace
+1747996805551:fetch-vacancies
+1747996849779:fetch-vacancies --company Сбер
+1747997085501:help
+1748003632033:show-vacancies
+1748003644535:fetch-vacancies --help
+1748003668030:fetch-vacanceis
+1748003668038:fetch-vacancies
+1748004722502:fetch-vacancies --company Сбер
+1748012163038:fetch-vacancies
+1748012374587:fetch-vacancies --company Сбер
+1748015423889:fetch-vacancies --company Яндекс
+1748019282508:fetch-vacancies --help
+1748019401635:fetch-vacancies --company Альфа --website trudvsem.ru
+1748023959223:fetch-vacancies --company Альфа -s trudvsem.ru
+1748024146794:fetch-vacancies -s trudvsem.ru
+1748024166498:fetch-vacancies --company Альфа -s trudvsem.ru
+1748073927422:fetch-vacancies --company Альфа --website trudvsem.ru
+1748074047832:show-vacancies
+1748074858995:show-vacancies --help
+1748074872421:show-vacancies --company Яндекс
+1748074882151:help
+1748074895957:show-history --help
+1748074901590:show-history
+1748074917207:help
+1748074925157:delete-vacancy --help
+1748074940482:delete-vacancy --id efdc3c78-36f9-11f0-8895-cb26dff57dd7
+1748074946848:help
+1748074953326:export-vacancies
+1748075103712:fetch-vacancies -s trudvsem.ru

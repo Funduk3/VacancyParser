@@ -82,24 +82,25 @@ public class VacancyCommands {
             @ShellOption(
                     value = {"-t", "--title"},
                     help = "Search text",
-                    defaultValue = "Developer"
+                    defaultValue = ShellOption.NULL
             ) String searchText,
             @ShellOption(
                     value = {"-c", "--company"},
-                    help = "Company name"
-            ) String company,
+                    help = "Company name",
+                    defaultValue = ShellOption.NULL
+            ) String company_name,
             @ShellOption(
                     value = {"-a", "--area"},
                     help = "Area code (1 - Moscow, 2 - St. Petersburg)",
-                    defaultValue = "1"
+                    defaultValue = ShellOption.NULL
             ) String area,
             @ShellOption(
-                    value = {"-s", "-website"},
+                    value = {"-s", "--website"},
                     help = "Website to find data from (hh.ru, trudvsem.ru)",
                     defaultValue = "hh.ru"
             ) String site
-    ) {
-        vacancyService.fetchVacancies(searchText, company, area, site);
+    ) throws Exception {
+        vacancyService.fetchVacancies(searchText, company_name, area, site);
         return "Successfully fetched vacancies";
     }
 

@@ -12,38 +12,27 @@ public class ConverterToEntityFromHhRuService {
 
     public VacancyEntity convertEntityFromHhRu(VacancyHhRu vacancyHhRu) {
         try {
-            VacancyEntity entity = new VacancyEntity();
-            entity.setId(vacancyHhRu.getId());
-            entity.setName(vacancyHhRu.getName());
-            entity.setAlternate_url(vacancyHhRu.getUrl());
-            if (vacancyHhRu.getEmployer() != null) {
-                entity.setEmployerId(vacancyHhRu.getEmployer().getId());
-                entity.setEmployerName(vacancyHhRu.getEmployer().getName());
-            }
-            if (vacancyHhRu.getSalary() != null) {
-                entity.setSalaryFrom(vacancyHhRu.getSalary().getFrom());
-                entity.setSalaryTo(vacancyHhRu.getSalary().getTo());
-                entity.setSalaryCurrency(vacancyHhRu.getSalary().getCurrency());
-                entity.setSalaryGross(vacancyHhRu.getSalary().getGross());
-            }
-            if (vacancyHhRu.getAddress() != null) {
-                entity.setCity(vacancyHhRu.getAddress().getCity());
-                entity.setStreet(vacancyHhRu.getAddress().getStreet());
-            }
-            if (vacancyHhRu.getSchedule() != null) {
-                entity.setScheduleName(vacancyHhRu.getSchedule().getName());
-            }
-            if (vacancyHhRu.getExperience() != null) {
-                entity.setExperienceName(vacancyHhRu.getExperience().getName());
-            }
-            if (vacancyHhRu.getSnippet() != null) {
-                entity.setRequirements(vacancyHhRu.getSnippet().getRequirement()
-                        .replaceAll("<[^>]*>", ""));
-            }
-            entity.setPublished_at(vacancyHhRu.getPublished_at());
-            entity.setDescription(vacancyHhRu.getDescription());
-
-            return entity;
+            return VacancyEntity.builder()
+                    .id(vacancyHhRu.getId())
+                    .name(vacancyHhRu.getName())
+                    .alternate_url(vacancyHhRu.getUrl())
+                    .employerId(vacancyHhRu.getEmployer() != null ? vacancyHhRu.getEmployer().getId() : null)
+                    .employerName(vacancyHhRu.getEmployer() != null ? vacancyHhRu.getEmployer().getName() : null)
+                    .salaryFrom(vacancyHhRu.getSalary() != null ? vacancyHhRu.getSalary().getFrom() : null)
+                    .salaryTo(vacancyHhRu.getSalary() != null ? vacancyHhRu.getSalary().getTo() : null)
+                    .salaryCurrency(vacancyHhRu.getSalary() != null ? vacancyHhRu.getSalary().getCurrency() : null)
+                    .salaryGross(vacancyHhRu.getSalary() != null ? vacancyHhRu.getSalary().getGross() : null)
+                    .city(vacancyHhRu.getAddress() != null ? vacancyHhRu.getAddress().getCity() : null)
+                    .street(vacancyHhRu.getAddress() != null ? vacancyHhRu.getAddress().getStreet() : null)
+                    .scheduleName(vacancyHhRu.getSchedule() != null ? vacancyHhRu.getSchedule().getName() : null)
+                    .experienceName(vacancyHhRu.getExperience() != null ? vacancyHhRu.getExperience().getName() : null)
+                    .requirements((vacancyHhRu.getSnippet() != null
+                            && vacancyHhRu.getSnippet().getRequirement() != null) ?
+                            vacancyHhRu.getSnippet().getRequirement()
+                                    .replaceAll("<[^>]*>", "") : null)
+                    .published_at(vacancyHhRu.getPublished_at())
+                    .description(vacancyHhRu.getDescription())
+                    .build();
         } catch (Exception e) {
             log.warn("Error converting vacancy {}: {}", vacancyHhRu.getId(), e.getMessage());
             return null;
