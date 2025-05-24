@@ -19,7 +19,6 @@ import java.util.Optional;
 
 @Service
 public class VacancyService {
-    private static final Logger log = LoggerFactory.getLogger(VacancyService.class);
     private final VacancyRepo vacancyRepository;
     private final VacancyFetcherService vacancyFetcherService;
     private final FormatterService formatterService;

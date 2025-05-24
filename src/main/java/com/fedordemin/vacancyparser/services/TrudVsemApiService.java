@@ -66,7 +66,6 @@ public class TrudVsemApiService {
     public List<VacancyEntity> fetchTrudVsemApi(String searchText, String area,
                                                 Boolean isByUser) {
         List<VacancyEntity> entitiesReceived = new ArrayList<>();
-        String company_id = null;
         VacancyResponseTrudVsem response = searchVacancies(searchText, area);
         log.error(response.toString());
         for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
