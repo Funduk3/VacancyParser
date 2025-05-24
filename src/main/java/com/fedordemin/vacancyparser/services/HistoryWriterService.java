@@ -23,11 +23,6 @@ public class HistoryWriterService {
         return historyRepo.findAll();
     }
 
-    public LogEntity getLogById(String id) {
-        Optional<LogEntity> log = historyRepo.findById(id);
-        return log.orElse(null);
-    }
-
     public void write(LogEntity logEntity) {
         historyRepo.save(logEntity);
     }

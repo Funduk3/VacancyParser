@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,11 +21,7 @@ public class VacancyFetcherService {
     private static final Logger log = LoggerFactory.getLogger(VacancyFetcherService.class);
 
     private final HHApiService hhApiService;
-    private final ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
     private final TrudVsemApiService trudVsemApiService;
-    private final ConverterToEntityFromTrudVsemService converterToEntityFromTrudVsemService;
-    private final HistoryWriterService historyWriterService;
-    private final VacancyComparator vacancyComparator;
     private final VacancyRepo vacancyRepo;
 
     @Value("${app.hh.pages:1}")
@@ -37,17 +32,10 @@ public class VacancyFetcherService {
 
     @Autowired
     public VacancyFetcherService(HHApiService hhApiService, VacancyRepo vacancyRepo,
-                                 ConverterToEntityFromHhRuService converterToEntityFromHhRuService,
-                                 TrudVsemApiService trudVsemApiService,
-                                 ConverterToEntityFromTrudVsemService converterToEntityFromTrudVsemService,
-                                 HistoryWriterService historyWriterService, VacancyComparator vacancyComparator) {
+                                 TrudVsemApiService trudVsemApiService) {
         this.hhApiService = hhApiService;
         this.vacancyRepo = vacancyRepo;
-        this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
         this.trudVsemApiService = trudVsemApiService;
-        this.converterToEntityFromTrudVsemService = converterToEntityFromTrudVsemService;
-        this.historyWriterService = historyWriterService;
-        this.vacancyComparator = vacancyComparator;
     }
 
     @Scheduled(cron = "0 */30 * * * ?")

@@ -89,7 +89,7 @@ public class VacancyService {
     }
 
     @Transactional
-    public void fetchVacancies(String searchText, String company_name, String area, String site) throws Exception {
+    public void fetchVacancies(String searchText, String company_name, String area, String site) {
         vacancyFetcherService.fetchVacancies(searchText, company_name, area, site, true);
     }
 
