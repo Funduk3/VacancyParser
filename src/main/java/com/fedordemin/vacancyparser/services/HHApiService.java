@@ -64,10 +64,16 @@ public class HHApiService {
                     entity,
                     VacancyResponseHhRu.class
             );
-            if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                return response.getBody();
-            } else {
-                log.error("Ошибка при запросе вакансий: HTTP {}", response.getStatusCode());
+            try {
+                if (response.getBody() != null) {
+                    if (response.getStatusCode().is2xxSuccessful()) {
+                        return response.getBody();
+                    } else {
+                        log.error("Ошибка при запросе вакансий: HTTP {}", response.getStatusCode());
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Не смогли найти");
             }
         } catch (RestClientException e) {
             log.error("Исключение при вызове API hh.ru", e);

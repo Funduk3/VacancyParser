@@ -1,7 +1,5 @@
 package com.fedordemin.vacancyparser.services;
 
-import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromTrudVsemService;
-import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;

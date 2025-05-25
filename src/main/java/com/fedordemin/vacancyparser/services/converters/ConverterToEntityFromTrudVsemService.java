@@ -13,7 +13,7 @@ public class ConverterToEntityFromTrudVsemService {
     public VacancyEntity convertEntityFromTrudVsem(VacancyTrudVsem vacancyTrudVsem) {
         try {
             log.error(vacancyTrudVsem.toString());
-            VacancyEntity entity = VacancyEntity.builder()
+            return VacancyEntity.builder()
                     .id(vacancyTrudVsem.getId())
                     .name(vacancyTrudVsem.getName())
                     .published_at(vacancyTrudVsem.getCreationDate().atStartOfDay())
@@ -27,7 +27,6 @@ public class ConverterToEntityFromTrudVsemService {
                     .employerName(vacancyTrudVsem.getCompany() != null ? vacancyTrudVsem.getCompany().getName() : null)
                     .city(vacancyTrudVsem.getAddress() != null ? vacancyTrudVsem.getAddress().getLocation() : null)
                     .build();
-            return entity;
         } catch (Exception e) {
             log.warn("Error converting vacancy {}: {}", vacancyTrudVsem.getId(), e.getMessage());
             return null;
