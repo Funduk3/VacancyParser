@@ -361,3 +361,44 @@
 1748074946848:help
 1748074953326:export-vacancies
 1748075103712:fetch-vacancies -s trudvsem.ru
+1748172238556:export-vacancies --help
+1748172248476:export-vacancies --type xlsx
+1748178424406:help
+1748180559766:set-criteria
+1748180570345:no
+1748201289421:help
+1748201295301:show-vacancies
+1748201312992:help
+1748201322518:show-history
+1748201329890:help
+1748201332619:exit
+1748201805142:help
+1748201812552:show-vacancies -help
+1748201823413:show-vacancies --title Ios
+1748201831580:show-vacancies --title Java
+1748201843273:show-vacancies --title it
+1748201854366:show-vacancies
+1748201861201:fetch-vacancies --help
+1748201874752:fetch-vacancies --title Kotlin --area 1
+1748201883030:show-vacancies --title Kotlin
+1748201902292:show-vacancies
+1748201911830:show-vacancies --page 4
+1748201922704:show-vacancies --page 2
+1748201934803:show-vacancies --title Java
+1748201947795:show-vacancies --title kotlin
+1748201967613:show-vacancies --page 3
+1748201987723:fetch-vacancies --title Ios
+1748201991800:show-vacancies
+1748202002012:show-vacancies --title ios
+1748202010607:show-vacancies --title Ios
+1748202039769:help
+1748202050391:show-history
+1748202057120:quit
+1748247864695:help
+1748247878010:show-history
+1748247882364:show-vacancies
+1748247887123:help
+1748247907414:fetch-vacancies --title python
+1748247922271:show-vacancies --title python
+1748247941705:quit
+1748279259252:fetch-vacancies --title python

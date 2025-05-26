@@ -123,54 +123,17 @@ class VacancyCommandsTest {
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void testSendNotificationNoNewVacancy() throws InterruptedException {
-        List<VacancyEntity> list = Collections.singletonList(new VacancyEntity());
-        Page<VacancyEntity> initialPage = new PageImpl<>(list);
-        Page<VacancyEntity> nextPage = new PageImpl<>(list);
+    void testSendNotification() {
+        when(vacancyService.sendNotification("Java", "Company", 1000,
+                2000, "Area"))
+                .thenReturn("Notification Started");
 
-        when(vacancyService.getVacancies("Java", "Company", null, null, "Area", 0, 5))
-                .thenReturn(initialPage);
-        when(vacancyService.getVacancies("Java", "Company", null, null, "Area", 0, 6))
-                .thenReturn(nextPage);
-        when(vacancyService.formatResult(initialPage)).thenReturn("Initial formatted result");
+        String result = vacancyCommands.sendNotification("Java", "Company", 1000,
+                2000, "Area");
 
-        String result = vacancyCommands.sendNotification("Java", "Company", null, null, "Area");
         assertEquals("Фоновый поиск вакансий запущен", result);
-        
-        TimeUnit.MILLISECONDS.sleep(500);
-        
-        verify(vacancyService).getVacancies("Java", "Company", null, null, "Area", 0, 5);
-        verify(vacancyService, times(1)).getVacancies("Java", "Company", null, null, "Area", 0, 6);
-        verify(vacancyService, never()).formatVacancy(any());
-    }
-
-    @Test
-    @Timeout(value = 5, unit = TimeUnit.SECONDS)
-    void testSendNotificationWithNewVacancy() throws InterruptedException {
-        VacancyEntity vacancy1 = new VacancyEntity();
-        VacancyEntity vacancy2 = new VacancyEntity();
-        List<VacancyEntity> initialList = Collections.singletonList(vacancy1);
-        Page<VacancyEntity> initialPage = new PageImpl<>(initialList);
-        List<VacancyEntity> newList = Arrays.asList(vacancy1, vacancy2);
-        Page<VacancyEntity> nextPage = new PageImpl<>(newList);
-
-        when(vacancyService.getVacancies("Java", "Company", null, null, "Area", 0, 5))
-                .thenReturn(initialPage);
-        when(vacancyService.getVacancies("Java", "Company", null, null, "Area", 0, 6))
-                .thenReturn(nextPage);
-        when(vacancyService.formatResult(initialPage)).thenReturn("Initial formatted result");
-        when(vacancyService.formatVacancy(vacancy2)).thenReturn("Formatted new vacancy");
-
-        String result = vacancyCommands.sendNotification("Java", "Company", null, null, "Area");
-        assertEquals("Фоновый поиск вакансий запущен", result);
-        
-        TimeUnit.MILLISECONDS.sleep(500);
-        
-        verify(vacancyService).getVacancies("Java", "Company", null, null, "Area", 0, 5);
-        verify(vacancyService, times(1)).getVacancies("Java", "Company", null, null, "Area", 0, 6);
-        verify(vacancyService).formatVacancy(vacancy2);
-
-        String output = baos.toString();
-        assertTrue(output.contains("Новая вакансия найдена!"));
+        assertTrue(baos.toString().contains("Notification Started"));
+        verify(vacancyService).sendNotification("Java", "Company", 1000,
+                2000, "Area");
     }
 }

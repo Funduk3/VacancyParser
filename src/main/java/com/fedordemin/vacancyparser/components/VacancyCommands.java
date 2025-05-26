@@ -14,30 +14,11 @@ import jakarta.annotation.PreDestroy;
 @ShellComponent
 public class VacancyCommands {
     private final VacancyService vacancyService;
-    private ScheduledExecutorService scheduler;
 
     @Autowired
     public VacancyCommands(
             VacancyService vacancyService) {
         this.vacancyService = vacancyService;
-    }
-
-    @PreDestroy
-    public void cleanup() {
-        stopNotifications();
-    }
-
-    public void stopNotifications() {
-        if (scheduler != null && !scheduler.isShutdown()) {
-            scheduler.shutdown();
-            try {
-                if (!scheduler.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                    scheduler.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                scheduler.shutdownNow();
-            }
-        }
     }
 
     @ShellMethod(key = "find-by-id", value = "Find Vacancy by id")
@@ -161,31 +142,8 @@ public class VacancyCommands {
             @ShellOption(value = {"-max", "--max-salary"}, help = "Maximum salary", defaultValue = ShellOption.NULL) Integer maxSalary,
             @ShellOption(value = {"-a", "--area"}, help = "Area of vacancy", defaultValue = ShellOption.NULL) String area) {
 
-        stopNotifications();
-
-        int size = 5;
-        Page<VacancyEntity> initialPage = vacancyService.getVacancies(title, company, minSalary, maxSalary, area, 0, size);
-        String output = vacancyService.formatResult(initialPage);
-        System.out.println("Эти вакансии уже есть в базе:\n" + output);
-
-        scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
-            Thread thread = new Thread(runnable);
-            thread.setDaemon(true);
-            return thread;
-        });
-        scheduler.scheduleAtFixedRate(() -> {
-            try {
-                Page<VacancyEntity> currentPage = vacancyService.getVacancies(title, company, minSalary, maxSalary, area, 0, size + 1);
-                if (currentPage.getContent().size() > initialPage.getContent().size()) {
-                    System.out.println("Новая вакансия найдена!");
-                    System.out.println(vacancyService.formatVacancy(
-                            currentPage.getContent().get(currentPage.getContent().size() - 1)));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, 0, 30, TimeUnit.SECONDS);
-
+        String output = vacancyService.sendNotification(title, company, minSalary, maxSalary, area);
+        System.out.println(output);
         return "Фоновый поиск вакансий запущен";
     }
 }

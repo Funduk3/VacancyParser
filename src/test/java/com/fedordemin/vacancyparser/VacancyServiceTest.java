@@ -3,10 +3,7 @@ package com.fedordemin.vacancyparser;
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
-import com.fedordemin.vacancyparser.services.FormatterService;
-import com.fedordemin.vacancyparser.services.HistoryWriterService;
-import com.fedordemin.vacancyparser.services.VacancyFetcherService;
-import com.fedordemin.vacancyparser.services.VacancyService;
+import com.fedordemin.vacancyparser.services.*;
 import com.fedordemin.vacancyparser.utils.CsvUtil;
 import com.fedordemin.vacancyparser.utils.JsonUtil;
 import com.fedordemin.vacancyparser.utils.XlsxUtil;
@@ -19,9 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -49,6 +49,9 @@ class VacancyServiceTest {
 
     @Mock
     private JsonUtil jsonUtil;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private VacancyService vacancyService;
@@ -202,5 +205,34 @@ class VacancyServiceTest {
 
         String result = vacancyService.export("csv", "export");
         assertTrue(result.contains("Error during export: Export error"));
+    }
+
+    @Test
+    void testSendNotification() {
+        VacancyEntity vacancyEntity = VacancyEntity.builder().id("1").build();
+        Page<VacancyEntity> initialPage = new PageImpl<>(Collections.singletonList(vacancyEntity));
+        when(vacancyRepository.search(any(), any(), any(), any(), any(), any(Pageable.class)))
+                .thenReturn(initialPage);
+        when(formatterService.formatResult(initialPage)).thenReturn("formatted result");
+
+        AtomicReference<String> ar = new AtomicReference<>("testNotification");
+        when(notificationService.startNotification(eq(initialPage), eq(initialPage.getContent().size())))
+                .thenReturn(ar);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(baos));
+
+        String result = vacancyService.sendNotification("Java", "Company", 1000, 2000, "Area");
+
+        System.setOut(originalOut);
+
+        assertEquals(String.valueOf(ar), result);
+        assertTrue(baos.toString().contains("These vacancies are already in the database:\nformatted result"));
+
+        verify(vacancyRepository, times(1)).search(any(), any(), any(), any(), any(), any(Pageable.class));
+        verify(formatterService, times(1)).formatResult(initialPage);
+        verify(notificationService)
+                .startNotification(initialPage, initialPage.getContent().size());
     }
 }

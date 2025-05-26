@@ -22,7 +22,7 @@ public class VacancyFetcherService {
     private final TrudVsemApiService trudVsemApiService;
     private final VacancyRepo vacancyRepo;
 
-    @Value("${app.hh.pages:1}")
+    @Value("${app.hh.pages:2}")
     private int pagesToFetch;
 
     @Value("${app.hh.per-page:10}")
@@ -36,7 +36,7 @@ public class VacancyFetcherService {
         this.trudVsemApiService = trudVsemApiService;
     }
 
-    @Scheduled(cron = "0 */30 * * * ?")
+    @Scheduled(cron = "0 */5 * * * ?")
     @Transactional
     public void scheduledFetchVacancies() throws Exception {
         log.info("Starting scheduled vacancy fetching");

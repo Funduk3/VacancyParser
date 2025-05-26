@@ -4,8 +4,6 @@ import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.utils.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -23,18 +21,20 @@ public class VacancyService {
     private final VacancyFetcherService vacancyFetcherService;
     private final FormatterService formatterService;
     private final HistoryWriterService historyWriterService;
+    private final NotificationService notificationService;
     private final CsvUtil csvUtil;
     private final XlsxUtil xlsxUtil;
     private final JsonUtil jsonUtil;
 
     @Autowired
     public VacancyService(VacancyRepo vacancyRepository, VacancyFetcherService vacancyFetcherService,
-                          FormatterService formatterService, HistoryWriterService historyWriterService,
+                          FormatterService formatterService, HistoryWriterService historyWriterService, NotificationService notificationService,
                           CsvUtil csvUtil, XlsxUtil xlsxUtil, JsonUtil jsonUtil) {
         this.vacancyRepository = vacancyRepository;
         this.vacancyFetcherService = vacancyFetcherService;
         this.formatterService = formatterService;
         this.historyWriterService = historyWriterService;
+        this.notificationService = notificationService;
         this.csvUtil = csvUtil;
         this.xlsxUtil = xlsxUtil;
         this.jsonUtil = jsonUtil;
@@ -118,5 +118,14 @@ public class VacancyService {
         } catch (IOException e) {
             return "Error during export: " + e.getMessage();
         }
+    }
+
+    public String sendNotification(String title, String company, Integer minSalary, Integer maxSalary, String area) {
+        int size = 5;
+        Page<VacancyEntity> initialPage = getVacancies(title, company, minSalary, maxSalary, area, 0, size);
+        String output = formatResult(initialPage);
+        System.out.println("These vacancies are already in the database:\n" + output);
+
+        return String.valueOf(notificationService.startNotification(initialPage, initialPage.getContent().size()));
     }
 }
