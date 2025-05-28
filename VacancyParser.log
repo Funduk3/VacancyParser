@@ -402,3 +402,50 @@
 1748247922271:show-vacancies --title python
 1748247941705:quit
 1748279259252:fetch-vacancies --title python
+1748362782154:help
+1748362816896:show-vacancies
+1748362828196:show-vacancies --title Python
+1748362836168:fetch-vacancies --title Python
+1748362846821:show-vacancies --title Python
+1748362919555:show-history
+1748362923461:help
+1748362937351:set-criteria --title Swift
+1748362948711:quit
+1748435534295:ы
+1748435536846:help
+1748435539470:help!
+1748435543455:help
+1748435563508:find-by-id -1
+1748435574403:find-by-id 1
+1748435584517:show-vacancies
+1748435587996:help
+1748435598614:show-vacancies --help
+1748435629561:show-vacancies --min-salary -1
+1748435636003:show-vacancies --min-salary 0
+1748435644250:show-vacancies --min-salary 1000000
+1748435680674:show-vacancies --min-salary 1000000000
+1748435692021:show-vacancies --min-salary 10.4
+1748435697290:show-vacancies --min-salary sad
+1748435707567:show-vacancies --min-salary de
+1748435714608:show-vacancies --help
+1748435726451:show-vacancies --max-salary 1
+1748435731551:show-vacancies --max-salary 0
+1748435734328:show-vacancies --max-salary -1
+1748435740089:show-vacancies --max-salary 25
+1748435742458:show-vacancies --max-salary 1000
+1748435753752:show-vacancies --h
+1748435761173:show-vacancies --help
+1748435784813:show-vacancies --tittle
+1748435788982:show-vacancies --title
+1748435806525:show-vacancies --title Java
+1748435823280:help
+1748435830297:fetch-vacancies --help
+1748435842749:fetch-vacancies --title Java
+1748435862284:show-vacancies --title Java
+1748435878341:fetch-vacancies --title S
+1748435886109:fetch-vacancies --title -1
+1748435888777:fetch-vacancies --title 2
+1748435903773:show-vacancies --title 2
+1748435965326:help
+1748436644466:fetch-vacancies --title 5
+1748436658286:show-vacancies --title 5

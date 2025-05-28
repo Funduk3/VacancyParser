@@ -52,6 +52,7 @@ public class HHApiService {
         if (area != null) {
             builder.queryParam("area", area);
         }
+        builder.queryParam("search_field", "name");
         builder.queryParam("page", page);
         builder.queryParam("per_page", perPage);
 
