@@ -1,5 +1,7 @@
-package com.fedordemin.vacancyparser.services;
+package com.fedordemin.vacancyparser.services.secondLayer;
 
+import com.fedordemin.vacancyparser.services.api.HHApiService;
+import com.fedordemin.vacancyparser.services.api.TrudVsemApiService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;

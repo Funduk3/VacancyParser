@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.models.VacancyHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyHhRu;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

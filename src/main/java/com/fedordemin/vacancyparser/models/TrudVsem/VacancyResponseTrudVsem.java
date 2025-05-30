@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.models;
+package com.fedordemin.vacancyparser.models.TrudVsem;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

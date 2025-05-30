@@ -1,6 +1,6 @@
 package com.fedordemin.vacancyparser.services.converters;
 
-import com.fedordemin.vacancyparser.models.VacancyHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyHhRu;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

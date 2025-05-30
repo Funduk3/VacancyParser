@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.services;
+package com.fedordemin.vacancyparser.utils.format;
 
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Component
-public class FormatterService {
+public class VacancyFormatterUtil {
     public String formatResult(Page<VacancyEntity> page) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("\n=== Page %d/%d (%d total) ===\n",

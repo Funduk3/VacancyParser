@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.models.VacancyTrudVsem;
+import com.fedordemin.vacancyparser.models.TrudVsem.VacancyTrudVsem;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromTrudVsemService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

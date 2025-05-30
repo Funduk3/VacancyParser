@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.utils.JsonExportUtil;
+import com.fedordemin.vacancyparser.utils.export.JsonExportUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

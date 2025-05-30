@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.utils;
+package com.fedordemin.vacancyparser.utils.export;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import org.apache.commons.csv.CSVFormat;

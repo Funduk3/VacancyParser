@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.utils.CsvExportUtil;
+import com.fedordemin.vacancyparser.utils.export.CsvExportUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;

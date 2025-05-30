@@ -1,7 +1,10 @@
-package com.fedordemin.vacancyparser.services;
+package com.fedordemin.vacancyparser.services.api;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.models.*;
+import com.fedordemin.vacancyparser.models.HhRu.EmployerResponseHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyResponseHhRu;
+import com.fedordemin.vacancyparser.services.HistoryWriterService;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,22 +21,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.fedordemin.vacancyparser.utils.comparator.VacancyComparator.isDuplicate;
+
 @Component
 public class HHApiService {
     private static final Logger log = LoggerFactory.getLogger(HHApiService.class);
 
     private final RestTemplate restTemplate;
     private final ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
-    private final VacancyComparator vacancyComparator;
     private final HistoryWriterService historyWriterService;
     private static final String API_URL = "https://api.hh.ru/vacancies";
     private static final String EMPLOYER_API_URL = "https://api.hh.ru/employers";
 
     @Autowired
-    public HHApiService(RestTemplate restTemplate, ConverterToEntityFromHhRuService converterToEntityFromHhRuService, VacancyComparator vacancyComparator, HistoryWriterService historyWriterService) {
+    public HHApiService(RestTemplate restTemplate, ConverterToEntityFromHhRuService converterToEntityFromHhRuService,
+                        HistoryWriterService historyWriterService) {
         this.restTemplate = restTemplate;
         this.converterToEntityFromHhRuService = converterToEntityFromHhRuService;
-        this.vacancyComparator = vacancyComparator;
         this.historyWriterService = historyWriterService;
     }
 
@@ -106,7 +110,7 @@ public class HHApiService {
                         convertEntityFromHhRu(vacancyHhRu);
                 boolean isDuplicate = false;
                 for (VacancyEntity entity : entitiesReceived) {
-                    if (vacancyComparator.isDuplicate(vacancyEntity, entity)) {
+                    if (isDuplicate(vacancyEntity, entity)) {
                         isDuplicate = true;
                         break;
                     }

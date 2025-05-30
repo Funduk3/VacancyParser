@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.utils;
+package com.fedordemin.vacancyparser.utils.export;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

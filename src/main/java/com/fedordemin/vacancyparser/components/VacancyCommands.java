@@ -1,19 +1,25 @@
 package com.fedordemin.vacancyparser.components;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.services.*;
+import com.fedordemin.vacancyparser.services.HistoryWriterService;
+import com.fedordemin.vacancyparser.services.MainFacade.VacancyFacadeService;
+import com.fedordemin.vacancyparser.utils.format.VacancyFormatterUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.shell.standard.*;
 
 @ShellComponent
 public class VacancyCommands {
-    private final VacancyService vacancyService;
+    private final VacancyFacadeService vacancyFacadeService;
+    private final VacancyFormatterUtil vacancyFormatterUtil;
+    private final HistoryWriterService historyWriterService;
 
     @Autowired
     public VacancyCommands(
-            VacancyService vacancyService) {
-        this.vacancyService = vacancyService;
+            VacancyFacadeService vacancyFacadeService, VacancyFormatterUtil vacancyFormatterUtil, HistoryWriterService historyWriterService) {
+        this.vacancyFacadeService = vacancyFacadeService;
+        this.vacancyFormatterUtil = vacancyFormatterUtil;
+        this.historyWriterService = historyWriterService;
     }
 
     @ShellMethod(key = "find-by-id", value = "Find Vacancy by id")
@@ -21,11 +27,11 @@ public class VacancyCommands {
                                         help = "Here should be an ID of vacancy",
                                         defaultValue = ShellOption.NULL
                                         ) String id) {
-        VacancyEntity result = vacancyService.getVacancy(id);
+        VacancyEntity result = vacancyFacadeService.getVacancy(id);
         if (result == null) {
             return "Vacancy not found with ID: " + id;
         }
-        return vacancyService.formatVacancy(result);
+        return vacancyFormatterUtil.formatVacancy(result);
     }
 
     @ShellMethod(key = "show-vacancies", value = "Show filtered vacancies")
@@ -66,11 +72,11 @@ public class VacancyCommands {
                     defaultValue = "10"
             ) int size
     ) {
-        Page<VacancyEntity> result = vacancyService.getVacancies(
+        Page<VacancyEntity> result = vacancyFacadeService.getVacancies(
                 title, company, minSalary, maxSalary, area, page, size
         );
 
-        return vacancyService.formatResult(result);
+        return vacancyFormatterUtil.formatResult(result);
     }
 
     @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from various API")
@@ -96,7 +102,7 @@ public class VacancyCommands {
                     defaultValue = "hh.ru"
             ) String site
     ) throws Exception {
-        vacancyService.fetchVacancies(searchText, company_name, area, site);
+        vacancyFacadeService.fetchVacancies(searchText, company_name, area, site);
         return "Successfully fetched vacancies";
     }
 
@@ -107,7 +113,7 @@ public class VacancyCommands {
                     help = "Vacancy ID"
             ) String vacancyId
     ) {
-        boolean deleted = vacancyService.deleteVacancy(vacancyId);
+        boolean deleted = vacancyFacadeService.deleteVacancy(vacancyId);
         if (deleted) {
             return "Vacancy with ID " + vacancyId + " was successfully deleted";
         } else {
@@ -120,13 +126,14 @@ public class VacancyCommands {
                                           help = "Type of the export file",
                                   defaultValue = "csv") String fileType,
                                 @ShellOption(defaultValue = "vacancies") String filename) {
-        return vacancyService.export(fileType, filename);
+        return vacancyFacadeService.export(fileType, filename);
     }
 
     @ShellMethod(value = "Show history of user's actions", key = "show-history")
     public String showHistory(@ShellOption(value = {"-t", "--type"},
-    help = "Type of user's action: added/deleted", defaultValue = "all") String actionType) {
-        return vacancyService.formatHistory(actionType);
+                            help = "Type of user's action: added/deleted", defaultValue = "all")
+                                  String actionType) {
+        return vacancyFormatterUtil.formatHistory(historyWriterService.getAllLogs(), actionType);
     }
 
     @ShellMethod(value = "Will send notification if a vacancy appears", key = "set-criteria")
@@ -137,7 +144,7 @@ public class VacancyCommands {
             @ShellOption(value = {"-max", "--max-salary"}, help = "Maximum salary", defaultValue = ShellOption.NULL) Integer maxSalary,
             @ShellOption(value = {"-a", "--area"}, help = "Area of vacancy", defaultValue = ShellOption.NULL) String area) {
 
-        String output = vacancyService.sendNotification(title, company, minSalary, maxSalary, area);
+        String output = vacancyFacadeService.sendNotification(title, company, minSalary, maxSalary, area);
         System.out.println(output);
         return "Фоновый поиск вакансий запущен";
     }

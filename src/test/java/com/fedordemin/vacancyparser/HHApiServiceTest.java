@@ -2,12 +2,10 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.models.EmployerResponseHhRu;
-import com.fedordemin.vacancyparser.models.VacancyHhRu;
-import com.fedordemin.vacancyparser.models.VacancyResponseHhRu;
-import com.fedordemin.vacancyparser.services.HHApiService;
-import com.fedordemin.vacancyparser.services.HistoryWriterService;
-import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
+import com.fedordemin.vacancyparser.models.HhRu.EmployerResponseHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyHhRu;
+import com.fedordemin.vacancyparser.models.HhRu.VacancyResponseHhRu;
+import com.fedordemin.vacancyparser.services.api.HHApiService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -2,7 +2,7 @@ package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.services.FormatterService;
+import com.fedordemin.vacancyparser.utils.format.VacancyFormatterUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
@@ -14,13 +14,13 @@ import java.util.Arrays;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
-class FormatterServiceTest {
+class VacancyFormatterUtilTest {
 
-    private FormatterService formatterService;
+    private VacancyFormatterUtil vacancyFormatterUtil;
 
     @BeforeEach
     void setUp() {
-        formatterService = new FormatterService();
+        vacancyFormatterUtil = new VacancyFormatterUtil();
     }
 
     @Test
@@ -36,7 +36,7 @@ class FormatterServiceTest {
         vacancy.setPublished_at(LocalDateTime.now());
         vacancy.setAlternate_url("http://example.com");
 
-        String result = formatterService.formatVacancy(vacancy);
+        String result = vacancyFormatterUtil.formatVacancy(vacancy);
         assertTrue(result.contains("ID: 1"));
         assertTrue(result.contains("Title: Developer"));
         assertTrue(result.contains("Company: Company"));
@@ -59,7 +59,7 @@ class FormatterServiceTest {
         vacancy.setPublished_at(null);
         vacancy.setAlternate_url(null);
 
-        String result = formatterService.formatVacancy(vacancy);
+        String result = vacancyFormatterUtil.formatVacancy(vacancy);
         assertTrue(result.contains("ID: 2"));
         assertTrue(result.contains("Title: Tester"));
         assertTrue(result.contains("Company: TestCompany"));
@@ -87,7 +87,7 @@ class FormatterServiceTest {
         List<VacancyEntity> list = Arrays.asList(vacancy1, vacancy2);
         Page<VacancyEntity> page = new PageImpl<>(list, PageRequest.of(0, 10), list.size());
 
-        String result = formatterService.formatResult(page);
+        String result = vacancyFormatterUtil.formatResult(page);
         assertTrue(result.contains("Page 1/1 (2 total)"));
         assertTrue(result.contains("ID: 1"));
         assertTrue(result.contains("ID: 2"));
@@ -102,7 +102,7 @@ class FormatterServiceTest {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        String result = formatterService.formatLog(log, "all");
+        String result = vacancyFormatterUtil.formatLog(log, "all");
         assertTrue(result.contains("Vacancy: 3"));
         assertTrue(result.contains("Action: added"));
         assertTrue(result.contains("Date of action:"));
@@ -117,10 +117,10 @@ class FormatterServiceTest {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        String result = formatterService.formatLog(log, "all");
+        String result = vacancyFormatterUtil.formatLog(log, "all");
         assertTrue(result.contains("Action: deleted"));
 
-        result = formatterService.formatLog(log, "DELETED");
+        result = vacancyFormatterUtil.formatLog(log, "DELETED");
         assertTrue(result.contains("Action: deleted"));
     }
 
@@ -133,7 +133,7 @@ class FormatterServiceTest {
                 .timestamp(LocalDateTime.now())
                 .build();
 
-        String result = formatterService.formatLog(log, "all");
+        String result = vacancyFormatterUtil.formatLog(log, "all");
         assertEquals("", result);
     }
 
@@ -153,7 +153,7 @@ class FormatterServiceTest {
                 .build();
 
         List<LogEntity> logs = Arrays.asList(log1, log2);
-        String history = formatterService.formatHistory(logs, "all");
+        String history = vacancyFormatterUtil.formatHistory(logs, "all");
 
         assertTrue(history.contains("Vacancy: 6"));
         assertTrue(history.contains("Vacancy: 7"));

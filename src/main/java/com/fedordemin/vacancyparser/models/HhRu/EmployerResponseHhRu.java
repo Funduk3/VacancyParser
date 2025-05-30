@@ -1,4 +1,4 @@
-package com.fedordemin.vacancyparser.models;
+package com.fedordemin.vacancyparser.models.HhRu;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.Id;

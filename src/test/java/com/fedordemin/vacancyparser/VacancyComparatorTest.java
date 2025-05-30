@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.services.VacancyComparator;
+import com.fedordemin.vacancyparser.utils.comparator.VacancyComparator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;

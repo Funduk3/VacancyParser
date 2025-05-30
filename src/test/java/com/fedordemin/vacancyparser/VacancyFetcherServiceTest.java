@@ -2,9 +2,9 @@ package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
-import com.fedordemin.vacancyparser.services.HHApiService;
-import com.fedordemin.vacancyparser.services.TrudVsemApiService;
-import com.fedordemin.vacancyparser.services.VacancyFetcherService;
+import com.fedordemin.vacancyparser.services.api.HHApiService;
+import com.fedordemin.vacancyparser.services.api.TrudVsemApiService;
+import com.fedordemin.vacancyparser.services.secondLayer.VacancyFetcherService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;

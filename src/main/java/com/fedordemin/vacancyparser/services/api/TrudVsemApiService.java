@@ -1,7 +1,8 @@
-package com.fedordemin.vacancyparser.services;
+package com.fedordemin.vacancyparser.services.api;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.models.VacancyResponseTrudVsem;
+import com.fedordemin.vacancyparser.models.TrudVsem.VacancyResponseTrudVsem;
+import com.fedordemin.vacancyparser.services.HistoryWriterService;
 import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromTrudVsemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

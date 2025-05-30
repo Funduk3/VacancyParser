@@ -1,8 +1,11 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.components.VacancyCommands;
+import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.services.VacancyService;
+import com.fedordemin.vacancyparser.services.HistoryWriterService;
+import com.fedordemin.vacancyparser.services.MainFacade.VacancyFacadeService;
+import com.fedordemin.vacancyparser.utils.format.VacancyFormatterUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,7 +15,6 @@ import org.springframework.data.domain.PageImpl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -22,15 +24,19 @@ import static org.mockito.Mockito.*;
 
 class VacancyCommandsTest {
 
-    private VacancyService vacancyService;
+    private VacancyFacadeService vacancyFacadeService;
+    private VacancyFormatterUtil vacancyFormatterUtil;
+    private HistoryWriterService historyWriterService;
     private VacancyCommands vacancyCommands;
     private PrintStream originalOut;
     private ByteArrayOutputStream baos;
 
     @BeforeEach
     void setUp() {
-        vacancyService = mock(VacancyService.class);
-        vacancyCommands = new VacancyCommands(vacancyService);
+        vacancyFacadeService = mock(VacancyFacadeService.class);
+        vacancyFormatterUtil = mock(VacancyFormatterUtil.class);
+        historyWriterService = mock(HistoryWriterService.class);
+        vacancyCommands = new VacancyCommands(vacancyFacadeService, vacancyFormatterUtil, historyWriterService);
         baos = new ByteArrayOutputStream();
         originalOut = System.out;
         System.setOut(new PrintStream(baos));
@@ -44,87 +50,91 @@ class VacancyCommandsTest {
     @Test
     void testFindByIdFound() {
         VacancyEntity vacancy = new VacancyEntity();
-        when(vacancyService.getVacancy("1")).thenReturn(vacancy);
-        when(vacancyService.formatVacancy(vacancy)).thenReturn("Formatted Vacancy");
+        when(vacancyFacadeService.getVacancy("1")).thenReturn(vacancy);
+        when(vacancyFormatterUtil.formatVacancy(vacancy)).thenReturn("Formatted Vacancy");
 
         String result = vacancyCommands.findById("1");
         assertEquals("Formatted Vacancy", result);
-        verify(vacancyService).getVacancy("1");
-        verify(vacancyService).formatVacancy(vacancy);
+        verify(vacancyFacadeService).getVacancy("1");
+        verify(vacancyFormatterUtil).formatVacancy(vacancy);
     }
 
     @Test
     void testFindByIdNotFound() {
-        when(vacancyService.getVacancy("1")).thenReturn(null);
+        when(vacancyFacadeService.getVacancy("1")).thenReturn(null);
 
         String result = vacancyCommands.findById("1");
         assertEquals("Vacancy not found with ID: 1", result);
-        verify(vacancyService).getVacancy("1");
-        verify(vacancyService, never()).formatVacancy(any());
+        verify(vacancyFacadeService).getVacancy("1");
+        verify(vacancyFormatterUtil, never()).formatVacancy(any());
     }
 
     @Test
     void testShowVacancies() {
         List<VacancyEntity> list = Collections.singletonList(new VacancyEntity());
         Page<VacancyEntity> page = new PageImpl<>(list);
-        when(vacancyService.getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10)).thenReturn(page);
-        when(vacancyService.formatResult(page)).thenReturn("Formatted Page");
+        when(vacancyFacadeService.getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10)).thenReturn(page);
+        when(vacancyFormatterUtil.formatResult(page)).thenReturn("Formatted Page");
 
         String result = vacancyCommands.showVacancies("Java", "Company", 1000, 2000, "Area", 0, 10);
         assertEquals("Formatted Page", result);
-        verify(vacancyService).getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10);
-        verify(vacancyService).formatResult(page);
+        verify(vacancyFacadeService).getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10);
+        verify(vacancyFormatterUtil).formatResult(page);
     }
 
     @Test
     void testFetchVacancies() throws Exception {
-        doNothing().when(vacancyService).fetchVacancies("Java", "Company", "Area", "hh.ru");
+        doNothing().when(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
 
         String result = vacancyCommands.fetchVacancies("Java", "Company", "Area", "hh.ru");
         assertEquals("Successfully fetched vacancies", result);
-        verify(vacancyService).fetchVacancies("Java", "Company", "Area", "hh.ru");
+        verify(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
     }
 
     @Test
     void testDeleteVacancySuccess() {
-        when(vacancyService.deleteVacancy("1")).thenReturn(true);
+        when(vacancyFacadeService.deleteVacancy("1")).thenReturn(true);
 
         String result = vacancyCommands.deleteVacancy("1");
         assertEquals("Vacancy with ID 1 was successfully deleted", result);
-        verify(vacancyService).deleteVacancy("1");
+        verify(vacancyFacadeService).deleteVacancy("1");
     }
 
     @Test
     void testDeleteVacancyNotFound() {
-        when(vacancyService.deleteVacancy("1")).thenReturn(false);
+        when(vacancyFacadeService.deleteVacancy("1")).thenReturn(false);
 
         String result = vacancyCommands.deleteVacancy("1");
         assertEquals("Vacancy not found with ID: 1", result);
-        verify(vacancyService).deleteVacancy("1");
+        verify(vacancyFacadeService).deleteVacancy("1");
     }
 
     @Test
     void testExportEmployees() {
-        when(vacancyService.export("csv", "vacancies")).thenReturn("Export done");
+        when(vacancyFacadeService.export("csv", "vacancies")).thenReturn("Export done");
 
         String result = vacancyCommands.exportEmployees("csv", "vacancies");
         assertEquals("Export done", result);
-        verify(vacancyService).export("csv", "vacancies");
+        verify(vacancyFacadeService).export("csv", "vacancies");
     }
 
     @Test
     void testShowHistory() {
-        when(vacancyService.formatHistory("all")).thenReturn("History info");
+        List<LogEntity> logs = Collections.emptyList();
+        when(historyWriterService.getAllLogs()).thenReturn(logs);
+        when(vacancyFormatterUtil.formatHistory(logs, "all")).thenReturn("History info");
 
         String result = vacancyCommands.showHistory("all");
+
         assertEquals("History info", result);
-        verify(vacancyService).formatHistory("all");
+        verify(historyWriterService).getAllLogs();
+        verify(vacancyFormatterUtil).formatHistory(logs, "all");
     }
 
     @Test
     @Timeout(value = 5, unit = TimeUnit.SECONDS)
     void testSendNotification() {
-        when(vacancyService.sendNotification("Java", "Company", 1000,
+        when(vacancyFacadeService.sendNotification("Java", "Company", 1000,
                 2000, "Area"))
                 .thenReturn("Notification Started");
 
@@ -133,7 +143,7 @@ class VacancyCommandsTest {
 
         assertEquals("Фоновый поиск вакансий запущен", result);
         assertTrue(baos.toString().contains("Notification Started"));
-        verify(vacancyService).sendNotification("Java", "Company", 1000,
+        verify(vacancyFacadeService).sendNotification("Java", "Company", 1000,
                 2000, "Area");
     }
 }
