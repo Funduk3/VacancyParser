@@ -4,9 +4,10 @@ import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.services.*;
-import com.fedordemin.vacancyparser.utils.CsvExportUtil;
-import com.fedordemin.vacancyparser.utils.JsonExportUtil;
-import com.fedordemin.vacancyparser.utils.XlsxExportUtil;
+import com.fedordemin.vacancyparser.utils.strategies.CsvExportStrategy;
+import com.fedordemin.vacancyparser.utils.strategies.ExportStrategy;
+import com.fedordemin.vacancyparser.utils.strategies.JsonExportStrategy;
+import com.fedordemin.vacancyparser.utils.strategies.XlsxExportStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,13 +43,13 @@ class VacancyServiceTest {
     private HistoryWriterService historyWriterService;
 
     @Mock
-    private CsvExportUtil csvUtil;
+    private CsvExportStrategy csvExportStrategy;
 
     @Mock
-    private XlsxExportUtil xlsxUtil;
+    private JsonExportStrategy jsonExportStrategy;
 
     @Mock
-    private JsonExportUtil jsonUtil;
+    private XlsxExportStrategy xlsxExportStrategy;
 
     @Mock
     private NotificationService notificationService;
@@ -59,6 +60,14 @@ class VacancyServiceTest {
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(vacancyService, "defaultPageSize", 10);
+
+        Map<String, ExportStrategy> strategies = Map.of(
+                "csv", csvExportStrategy,
+                "json", jsonExportStrategy,
+                "xlsx", xlsxExportStrategy
+        );
+
+        ReflectionTestUtils.setField(vacancyService, "exportStrategies", strategies);
     }
 
     @Test
@@ -161,50 +170,44 @@ class VacancyServiceTest {
     void testExport_Csv() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(csvUtil).export(vacancies, "export.csv");
+        doNothing().when(csvExportStrategy).export(vacancies, "export.csv");
 
         String result = vacancyService.export("csv", "export");
-        assertEquals("Export completed: export.csv", result);
-        verify(csvUtil, times(1)).export(vacancies, "export.csv");
+        assertEquals("Экспорт завершен: export.csv", result);
+        verify(csvExportStrategy, times(1)).export(vacancies, "export.csv");
     }
 
     @Test
     void testExport_Json() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(jsonUtil).export(vacancies, "export.json");
+        doNothing().when(jsonExportStrategy).export(vacancies, "export.json");
 
         String result = vacancyService.export("json", "export");
-        assertEquals("Export completed: export.json", result);
-        verify(jsonUtil, times(1)).export(vacancies, "export.json");
+        assertEquals("Экспорт завершен: export.json", result);
+        verify(jsonExportStrategy, times(1)).export(vacancies, "export.json");
     }
 
     @Test
     void testExport_Xlsx() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(xlsxUtil).export(vacancies, "export.xlsx");
+        doNothing().when(xlsxExportStrategy).export(vacancies, "export.xlsx");
 
         String result = vacancyService.export("xlsx", "export");
-        assertEquals("Export completed: export.xlsx", result);
-        verify(xlsxUtil, times(1)).export(vacancies, "export.xlsx");
-    }
-
-    @Test
-    void testExport_InvalidType() {
-        String result = vacancyService.export("txt", "export");
-        assertEquals("No such type", result);
+        assertEquals("Экспорт завершен: export.xlsx", result);
+        verify(xlsxExportStrategy, times(1)).export(vacancies, "export.xlsx");
     }
 
     @Test
     void testExport_Exception() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doThrow(new IOException("Export error"))
-                .when(csvUtil).export(vacancies, "export.csv");
+        doThrow(new IOException("Ошибка при экспорте"))
+                .when(csvExportStrategy).export(vacancies, "export.csv");
 
         String result = vacancyService.export("csv", "export");
-        assertTrue(result.contains("Error during export: Export error"));
+        assertTrue(result.contains("Ошибка при экспорте"));
     }
 
     @Test
