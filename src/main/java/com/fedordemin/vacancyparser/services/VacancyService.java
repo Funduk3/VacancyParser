@@ -3,7 +3,7 @@ package com.fedordemin.vacancyparser.services;
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
-import com.fedordemin.vacancyparser.utils.*;
+import com.fedordemin.vacancyparser.utils.strategies.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
 
 @Service
@@ -22,22 +22,25 @@ public class VacancyService {
     private final FormatterService formatterService;
     private final HistoryWriterService historyWriterService;
     private final NotificationService notificationService;
-    private final CsvUtil csvUtil;
-    private final XlsxUtil xlsxUtil;
-    private final JsonUtil jsonUtil;
+
+    private final Map<String, ExportStrategy> exportStrategies;
 
     @Autowired
     public VacancyService(VacancyRepo vacancyRepository, VacancyFetcherService vacancyFetcherService,
-                          FormatterService formatterService, HistoryWriterService historyWriterService, NotificationService notificationService,
-                          CsvUtil csvUtil, XlsxUtil xlsxUtil, JsonUtil jsonUtil) {
+                          FormatterService formatterService, HistoryWriterService historyWriterService,
+                          NotificationService notificationService, CsvExportStrategy csvStrategy,
+                          JsonExportStrategy jsonStrategy, XlsxExportStrategy xlsxStrategy) {
         this.vacancyRepository = vacancyRepository;
         this.vacancyFetcherService = vacancyFetcherService;
         this.formatterService = formatterService;
         this.historyWriterService = historyWriterService;
         this.notificationService = notificationService;
-        this.csvUtil = csvUtil;
-        this.xlsxUtil = xlsxUtil;
-        this.jsonUtil = jsonUtil;
+
+        this.exportStrategies = Map.of(
+                "csv", csvStrategy,
+                "json", jsonStrategy,
+                "xlsx", xlsxStrategy
+        );
     }
 
     @Value("${app.pagination.default-size:10}")
@@ -106,17 +109,16 @@ public class VacancyService {
 
     public String export(String fileType, String filename) {
         try {
-            filename += "." + fileType;
-            List<VacancyEntity> all = getAllVacancies();
-            switch (fileType.toLowerCase()) {
-                case "csv" -> csvUtil.toCsvBytes(all, filename);
-                case "json" -> jsonUtil.toJsonBytes(all, filename);
-                case "xlsx" -> xlsxUtil.toXlsxBytes(all, filename);
-                default -> {return "No such type";}
+            String fullFilename = filename + "." + fileType;
+            ExportStrategy strategy = exportStrategies.get(fileType.toLowerCase());
+            if (strategy == null) {
+                return "Неподдерживаемый тип файла";
             }
-            return "Export completed: " + filename;
+            List<VacancyEntity> all = getAllVacancies();
+            strategy.export(all, fullFilename);
+            return "Экспорт завершен: " + fullFilename;
         } catch (IOException e) {
-            return "Error during export: " + e.getMessage();
+            return "Ошибка при экспорте: " + e.getMessage();
         }
     }
 

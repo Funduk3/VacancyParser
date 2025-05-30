@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.utils.JsonUtil;
+import com.fedordemin.vacancyparser.utils.JsonExportUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -18,9 +18,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class JsonUtilTest {
+public class JsonExportUtilTest {
 
-    private final JsonUtil jsonUtil = new JsonUtil();
+    private final JsonExportUtil jsonUtil = new JsonExportUtil();
     private final ObjectMapper mapper = new ObjectMapper()
             .registerModule(new JavaTimeModule())
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -28,7 +28,7 @@ public class JsonUtilTest {
     @Test
     public void testToJsonBytesWithEmptyList(@TempDir Path tempDir) throws IOException {
         Path tempFile = tempDir.resolve("empty.json");
-        jsonUtil.toJsonBytes(List.of(), tempFile.toString());
+        jsonUtil.export(List.of(), tempFile.toString());
         String content = Files.readString(tempFile).trim();
         assertEquals("[ ]", content);
     }
@@ -52,7 +52,7 @@ public class JsonUtilTest {
                 .alternate_url("http://example.com")
                 .build();
 
-        jsonUtil.toJsonBytes(List.of(vacancy), tempFile.toString());
+        jsonUtil.export(List.of(vacancy), tempFile.toString());
         String content = Files.readString(tempFile);
         List<VacancyEntity> result = mapper.readValue(content, new TypeReference<List<VacancyEntity>>() {});
 
@@ -106,7 +106,7 @@ public class JsonUtilTest {
                 .alternate_url("http://example.com/2")
                 .build();
 
-        jsonUtil.toJsonBytes(List.of(vacancy1, vacancy2), tempFile.toString());
+        jsonUtil.export(List.of(vacancy1, vacancy2), tempFile.toString());
         String content = Files.readString(tempFile);
         List<VacancyEntity> result = mapper.readValue(content, new TypeReference<List<VacancyEntity>>() {});
 

@@ -13,15 +13,15 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Component
-public class XlsxUtil {
-    private static Class<?> clazz = VacancyEntity.class;
+public class XlsxExportUtil implements ExportUtil {
 
-    public void toXlsxBytes(List<?> list, String filename) throws IOException {
+    @Override
+    public void export(List<VacancyEntity> list, String filename) throws IOException {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             Sheet sheet = workbook.createSheet("Sheet1");
-            Field[] fields = clazz.getDeclaredFields();
+            Field[] fields = VacancyEntity.class.getDeclaredFields();
 
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < fields.length; i++) {

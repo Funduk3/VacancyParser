@@ -12,8 +12,10 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Component
-public class CsvUtil {
-    public void toCsvBytes(List<VacancyEntity> list, String filename) throws IOException {
+public class CsvExportUtil implements ExportUtil {
+
+    @Override
+    public void export(List<VacancyEntity> list, String filename) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try (CSVPrinter printer = new CSVPrinter(
                 new OutputStreamWriter(out, StandardCharsets.UTF_8),

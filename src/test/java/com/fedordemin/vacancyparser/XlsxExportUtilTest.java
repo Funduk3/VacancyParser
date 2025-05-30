@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.utils.XlsxUtil;
+import com.fedordemin.vacancyparser.utils.XlsxExportUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -17,16 +17,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class XlsxUtilTest {
+public class XlsxExportUtilTest {
 
-    private final XlsxUtil xlsxUtil = new XlsxUtil();
+    private final XlsxExportUtil xlsxUtil = new XlsxExportUtil();
 
     private final String[] expectedHeader = {"id", "alternate_url", "name", "salaryFrom", "salaryTo", "salaryCurrency", "salaryGross", "employerId", "employerName", "description", "city", "street", "published_at", "requirements", "scheduleName", "experienceName"};
 
     @Test
     public void testToXlsxBytesWithEmptyList(@TempDir Path tempDir) throws IOException {
         Path tempFile = tempDir.resolve("empty.xlsx");
-        xlsxUtil.toXlsxBytes(List.of(), tempFile.toString());
+        xlsxUtil.export(List.of(), tempFile.toString());
 
         try (FileInputStream fis = new FileInputStream(tempFile.toFile());
              XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
@@ -59,7 +59,7 @@ public class XlsxUtilTest {
                 .alternate_url("http://example.com")
                 .build();
 
-        xlsxUtil.toXlsxBytes(List.of(vacancy), tempFile.toString());
+        xlsxUtil.export(List.of(vacancy), tempFile.toString());
 
         try (FileInputStream fis = new FileInputStream(tempFile.toFile());
              XSSFWorkbook workbook = new XSSFWorkbook(fis)) {
@@ -125,7 +125,7 @@ public class XlsxUtilTest {
                 .alternate_url("http://example.com/2")
                 .build();
 
-        xlsxUtil.toXlsxBytes(List.of(vacancy1, vacancy2), tempFile.toString());
+        xlsxUtil.export(List.of(vacancy1, vacancy2), tempFile.toString());
 
         try (FileInputStream fis = new FileInputStream(tempFile.toFile());
              XSSFWorkbook workbook = new XSSFWorkbook(fis)) {

@@ -4,9 +4,9 @@ import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.repositories.VacancyRepo;
 import com.fedordemin.vacancyparser.services.*;
-import com.fedordemin.vacancyparser.utils.CsvUtil;
-import com.fedordemin.vacancyparser.utils.JsonUtil;
-import com.fedordemin.vacancyparser.utils.XlsxUtil;
+import com.fedordemin.vacancyparser.utils.CsvExportUtil;
+import com.fedordemin.vacancyparser.utils.JsonExportUtil;
+import com.fedordemin.vacancyparser.utils.XlsxExportUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,13 +42,13 @@ class VacancyServiceTest {
     private HistoryWriterService historyWriterService;
 
     @Mock
-    private CsvUtil csvUtil;
+    private CsvExportUtil csvUtil;
 
     @Mock
-    private XlsxUtil xlsxUtil;
+    private XlsxExportUtil xlsxUtil;
 
     @Mock
-    private JsonUtil jsonUtil;
+    private JsonExportUtil jsonUtil;
 
     @Mock
     private NotificationService notificationService;
@@ -161,33 +161,33 @@ class VacancyServiceTest {
     void testExport_Csv() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(csvUtil).toCsvBytes(vacancies, "export.csv");
+        doNothing().when(csvUtil).export(vacancies, "export.csv");
 
         String result = vacancyService.export("csv", "export");
         assertEquals("Export completed: export.csv", result);
-        verify(csvUtil, times(1)).toCsvBytes(vacancies, "export.csv");
+        verify(csvUtil, times(1)).export(vacancies, "export.csv");
     }
 
     @Test
     void testExport_Json() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(jsonUtil).toJsonBytes(vacancies, "export.json");
+        doNothing().when(jsonUtil).export(vacancies, "export.json");
 
         String result = vacancyService.export("json", "export");
         assertEquals("Export completed: export.json", result);
-        verify(jsonUtil, times(1)).toJsonBytes(vacancies, "export.json");
+        verify(jsonUtil, times(1)).export(vacancies, "export.json");
     }
 
     @Test
     void testExport_Xlsx() throws IOException {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
-        doNothing().when(xlsxUtil).toXlsxBytes(vacancies, "export.xlsx");
+        doNothing().when(xlsxUtil).export(vacancies, "export.xlsx");
 
         String result = vacancyService.export("xlsx", "export");
         assertEquals("Export completed: export.xlsx", result);
-        verify(xlsxUtil, times(1)).toXlsxBytes(vacancies, "export.xlsx");
+        verify(xlsxUtil, times(1)).export(vacancies, "export.xlsx");
     }
 
     @Test
@@ -201,7 +201,7 @@ class VacancyServiceTest {
         List<VacancyEntity> vacancies = Collections.singletonList(VacancyEntity.builder().id("1").build());
         when(vacancyRepository.findAll()).thenReturn(vacancies);
         doThrow(new IOException("Export error"))
-                .when(csvUtil).toCsvBytes(vacancies, "export.csv");
+                .when(csvUtil).export(vacancies, "export.csv");
 
         String result = vacancyService.export("csv", "export");
         assertTrue(result.contains("Error during export: Export error"));

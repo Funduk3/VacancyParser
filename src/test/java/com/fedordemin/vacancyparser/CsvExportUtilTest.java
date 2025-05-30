@@ -1,7 +1,7 @@
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
-import com.fedordemin.vacancyparser.utils.CsvUtil;
+import com.fedordemin.vacancyparser.utils.CsvExportUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
@@ -16,14 +16,14 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class CsvUtilTest {
+public class CsvExportUtilTest {
 
-    private final CsvUtil csvUtil = new CsvUtil();
+    private final CsvExportUtil csvUtil = new CsvExportUtil();
 
     @Test
     public void testToCsvBytesWithEmptyList(@TempDir Path tempDir) throws IOException {
         Path tempFile = tempDir.resolve("empty.csv");
-        csvUtil.toCsvBytes(Collections.emptyList(), tempFile.toString());
+        csvUtil.export(Collections.emptyList(), tempFile.toString());
         String content = Files.readString(tempFile);
 
         String trimmedContent = content.trim();
@@ -54,7 +54,7 @@ public class CsvUtilTest {
         Mockito.when(vacancy.getExperienceName()).thenReturn("Mid");
         Mockito.when(vacancy.getAlternate_url()).thenReturn("http://example.com");
 
-        csvUtil.toCsvBytes(List.of(vacancy), tempFile.toString());
+        csvUtil.export(List.of(vacancy), tempFile.toString());
         List<String> lines = Files.readAllLines(tempFile);
 
         String expectedHeader = String.join(",", "ID", "Name", "SalaryFrom", "SalaryTo", "Employer",
@@ -100,7 +100,7 @@ public class CsvUtilTest {
         Mockito.when(vacancy2.getExperienceName()).thenReturn("Senior");
         Mockito.when(vacancy2.getAlternate_url()).thenReturn("http://example.com/2");
 
-        csvUtil.toCsvBytes(List.of(vacancy1, vacancy2), tempFile.toString());
+        csvUtil.export(List.of(vacancy1, vacancy2), tempFile.toString());
         List<String> lines = Files.readAllLines(tempFile);
 
         String expectedHeader = String.join(",", "ID", "Name", "SalaryFrom", "SalaryTo", "Employer",

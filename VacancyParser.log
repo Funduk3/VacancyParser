@@ -449,3 +449,6 @@
 1748435965326:help
 1748436644466:fetch-vacancies --title 5
 1748436658286:show-vacancies --title 5
+1748596643896:help
+1748596650442:export-vacancies --help
+1748596681819:export-vacancies --type json
