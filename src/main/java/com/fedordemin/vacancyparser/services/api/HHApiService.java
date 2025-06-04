@@ -99,11 +99,8 @@ public class HHApiService {
             VacancyResponseHhRu response = searchVacancies(searchText, company_id, area, page, perPage);
             log.error(String.valueOf(response));
             if (response == null || response.getItems() == null || response.getItems().isEmpty()) {
-                log.info("No more vacancies to fetch");
-                break;
+                throw new IllegalStateException("There are no vacancies found for the given criteria.");
             }
-
-            List<VacancyEntity> pageEntities = new ArrayList<>();
             for (VacancyHhRu vacancyHhRu : response.getItems()) {
                 log.warn(vacancyHhRu.toString());
                 VacancyEntity vacancyEntity = converterToEntityFromHhRuService.
@@ -120,8 +117,6 @@ public class HHApiService {
                     historyWriterService.saveToHistory(isByUser, vacancyEntity);
                 }
             }
-            entitiesReceived.addAll(pageEntities);
-
             if ((page + 1) >= response.getPages()) {
                 break;
             }
@@ -137,12 +132,11 @@ public class HHApiService {
         headers.set("User-Agent", USER_AGENT);
         HttpEntity<?> entity = new HttpEntity<>(headers);
 
-        int page = 0;
         URI uri = UriComponentsBuilder
                 .fromHttpUrl(EMPLOYER_API_URL)
                 .queryParam("text", companyName)
                 .queryParam("per_page", PER_PAGE)
-                .queryParam("page", page)
+                .queryParam("page", 0)
                 .encode(StandardCharsets.UTF_8)
                 .build()
                 .toUri();
@@ -161,7 +155,6 @@ public class HHApiService {
                 return emp.getId();
             }
         }
-        page++;
         log.warn("Работодатель '{}' не найден ни на одной из страниц.", companyName);
         return null;
     }

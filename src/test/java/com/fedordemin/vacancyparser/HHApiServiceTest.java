@@ -1,15 +1,17 @@
-// java
 package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
 import com.fedordemin.vacancyparser.models.HhRu.EmployerResponseHhRu;
 import com.fedordemin.vacancyparser.models.HhRu.VacancyHhRu;
 import com.fedordemin.vacancyparser.models.HhRu.VacancyResponseHhRu;
+import com.fedordemin.vacancyparser.services.HistoryWriterService;
 import com.fedordemin.vacancyparser.services.api.HHApiService;
+import com.fedordemin.vacancyparser.services.converters.ConverterToEntityFromHhRuService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -25,6 +27,11 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class HHApiServiceTest {
+    @Mock
+    private ConverterToEntityFromHhRuService converterToEntityFromHhRuService;
+
+    @Mock
+    private HistoryWriterService historyWriterService;
 
     @Mock
     private RestTemplate restTemplate;
@@ -72,15 +79,18 @@ public class HHApiServiceTest {
                         eq(HttpMethod.GET), any(HttpEntity.class), eq(EmployerResponseHhRu.class)))
                 .thenReturn(employerResponseEntity);
 
-        VacancyHhRu vacancyHhRu = mock(VacancyHhRu.class);
         VacancyResponseHhRu vacancyResponse = new VacancyResponseHhRu();
-        vacancyResponse.setItems(Collections.singletonList(vacancyHhRu));
+        vacancyResponse.setItems(Collections.emptyList());
         vacancyResponse.setPages(1);
         ResponseEntity<VacancyResponseHhRu> vacancyResponseEntity =
                 new ResponseEntity<>(vacancyResponse, HttpStatus.OK);
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class), eq(VacancyResponseHhRu.class)))
+                .thenReturn(vacancyResponseEntity);
 
-        List<VacancyEntity> vacancies = hhApiService.fetchHhRu("Java", "TestCompany", "1", true, 1, 10);
-        assertEquals(0, vacancies.size());
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+                hhApiService.fetchHhRu("Java", "TestCompany", "1", true, 1, 10)
+        );
+        assertEquals("No more vacancies to fetch", exception.getMessage());
     }
 
     @Test
@@ -122,5 +132,34 @@ public class HHApiServiceTest {
 
         String result = hhApiService.getCompanyIdByName(companyName);
         assertNull(result);
+    }
+
+    @Test
+    void testFetchHhRu_processVacancies() {
+        VacancyResponseHhRu vacancyResponse = new VacancyResponseHhRu();
+        List<VacancyHhRu> vacancies = new ArrayList<>();
+        VacancyHhRu vacancy1 = Mockito.mock(VacancyHhRu.class);
+        VacancyHhRu vacancy2 = Mockito.mock(VacancyHhRu.class);
+        vacancies.add(vacancy1);
+        vacancies.add(vacancy2);
+        vacancyResponse.setItems(vacancies);
+        vacancyResponse.setPages(1);
+
+        when(restTemplate.exchange(anyString(), eq(HttpMethod.GET), any(HttpEntity.class),
+                eq(VacancyResponseHhRu.class)))
+                .thenReturn(new ResponseEntity<>(vacancyResponse, HttpStatus.OK));
+
+        VacancyEntity entity1 = new VacancyEntity();
+        VacancyEntity entity2 = new VacancyEntity();
+        entity1.setName("Vacancy 1");
+        entity2.setName("Vacancy 2");
+        when(converterToEntityFromHhRuService.convertEntityFromHhRu(vacancy1)).thenReturn(entity1);
+        when(converterToEntityFromHhRuService.convertEntityFromHhRu(vacancy2)).thenReturn(entity2);
+
+        List<VacancyEntity> result = hhApiService.fetchHhRu("Java", null, "1", true, 1, 10);
+
+        assertEquals(2, result.size());
+        verify(historyWriterService).saveToHistory(true, entity1);
+        verify(historyWriterService).saveToHistory(true, entity2);
     }
 }

@@ -48,7 +48,7 @@ public class NotificationService {
                             page.getContent().get(page.getContent().size() - 1)));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new IllegalStateException("Ошибка при выполнении уведомления", e);
             }
         }, 0, 100, TimeUnit.MILLISECONDS);
         return newVacancy;

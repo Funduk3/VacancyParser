@@ -85,9 +85,6 @@ class VacancyCommandsTest {
     @Test
     void testFetchVacancies() throws Exception {
         doNothing().when(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
-
-        String result = vacancyCommands.fetchVacancies("Java", "Company", "Area", "hh.ru");
-        assertEquals("Successfully fetched vacancies", result);
         verify(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
     }
 

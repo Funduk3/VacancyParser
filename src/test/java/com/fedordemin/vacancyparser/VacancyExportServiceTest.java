@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,9 +69,10 @@ class VacancyExportServiceTest {
         doThrow(new IOException("Тестовая ошибка"))
                 .when(csvExportUtil).export(vacancies, "test.csv");
 
-        String result = vacancyExportService.export("csv", "test");
-
-        assertEquals("Ошибка при экспорте: Тестовая ошибка", result);
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+                vacancyExportService.export("csv", "test")
+        );
+        assertEquals("Ошибка при экспорте: Тестовая ошибка", exception.getMessage());
         verify(vacancyManagementService).getAllVacancies();
         verify(csvExportUtil).export(vacancies, "test.csv");
     }

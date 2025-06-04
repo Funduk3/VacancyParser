@@ -53,6 +53,8 @@ public class VacancyFetcherService {
             entitiesToSave = hhApiService.fetchHhRu(searchText, company_name, area, isByUser, pagesToFetch, perPage);
         } else if (site.equalsIgnoreCase("trudvsem.ru")) {
             entitiesToSave = trudVsemApiService.fetchTrudVsemApi(searchText, area, isByUser);
+        } else {
+            throw new IllegalArgumentException("Unsupported site: " + site);
         }
         if (!entitiesToSave.isEmpty()) {
             vacancyRepo.saveAll(entitiesToSave);

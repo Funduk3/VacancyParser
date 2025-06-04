@@ -28,8 +28,8 @@ public class ConverterToEntityFromTrudVsemService {
                     .city(vacancyTrudVsem.getAddress() != null ? vacancyTrudVsem.getAddress().getLocation() : null)
                     .build();
         } catch (Exception e) {
-            log.warn("Error converting vacancy {}: {}", vacancyTrudVsem.getId(), e.getMessage());
-            return null;
+            throw new IllegalStateException("Error converting vacancy " + vacancyTrudVsem.getId()
+                    + ": " + e.getMessage(), e);
         }
     }
 }

@@ -80,7 +80,7 @@ public class VacancyCommands {
     }
 
     @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from various API")
-    public String fetchVacancies(
+    public void fetchVacancies(
             @ShellOption(
                     value = {"-t", "--title"},
                     help = "Search text",
@@ -101,9 +101,8 @@ public class VacancyCommands {
                     help = "Website to find data from (hh.ru, trudvsem.ru)",
                     defaultValue = "hh.ru"
             ) String site
-    ) throws Exception {
+    ) {
         vacancyFacadeService.fetchVacancies(searchText, company_name, area, site);
-        return "Successfully fetched vacancies";
     }
 
     @ShellMethod(key = "delete-vacancy", value = "Delete a vacancy from the database")

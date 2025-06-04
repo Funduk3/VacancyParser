@@ -452,3 +452,35 @@
 1748596643896:help
 1748596650442:export-vacancies --help
 1748596681819:export-vacancies --type json
+1748626854488:help
+1748626858281:show-vacancies
+1748626868801:show-history
+1748981970420:help
+1748981977451:show-history
+1748981993236:help
+1748982003001:find-by-id --help
+1748982013075:find-by-id 0
+1748982018772:help
+1748982024390:show-vacancies --help
+1748982046497:show-vacancies --min-salary 50000
+1748982075257:help
+1748982085584:fetch-vacancies --help
+1748982106137:fetch-vacancies --website qwerty
+1748982426232:help
+1748982432598:fetch-vacancies --s n
+1748982439938:fetch-vacancies --help
+1748982445534:fetch-vacancies -s sss
+1748982576884:fetch-vacancies -s nigger
+1748982627025:fetch-vacancies --help
+1748982643839:fetch-vacancies --title dghfslkgjh
+1748982777768:quit
+1748982790679:fetch-vacancies --title dghfslkgjh
+1748982878817:fetch-vacancies --title ghghg -s trudvsem.ru
+1748983038667:help
+1748983048220:delete-vacancy --help
+1748983052672:delete-vacancy --id n
+1748983137326:help
+1748983144183:show-vacancies --help
+1748983155256:show-vacancies --title uuu
+1748983170772:show-vacancies --min-salary iii
+1748983197819:show-vacancies --company 999

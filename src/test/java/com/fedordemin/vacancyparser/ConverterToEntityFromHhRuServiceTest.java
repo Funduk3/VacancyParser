@@ -124,8 +124,9 @@ class ConverterToEntityFromHhRuServiceTest {
         when(vacancy.getId()).thenReturn("3");
         when(vacancy.getName()).thenThrow(new RuntimeException("Test exception"));
 
-        VacancyEntity entity = converter.convertEntityFromHhRu(vacancy);
-
-        assertNull(entity);
+        IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
+                converter.convertEntityFromHhRu(vacancy)
+        );
+        assertEquals("Error converting vacancy 3: Test exception", exception.getMessage());
     }
 }

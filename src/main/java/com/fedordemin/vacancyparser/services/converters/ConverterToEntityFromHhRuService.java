@@ -34,8 +34,8 @@ public class ConverterToEntityFromHhRuService {
                     .description(vacancyHhRu.getDescription())
                     .build();
         } catch (Exception e) {
-            log.warn("Error converting vacancy {}: {}", vacancyHhRu.getId(), e.getMessage());
-            return null;
+            throw new IllegalStateException("Error converting vacancy " + vacancyHhRu.getId()
+                    + ": " + e.getMessage(), e);
         }
     }
 }

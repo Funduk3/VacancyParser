@@ -60,7 +60,6 @@ public class TrudVsemApiService {
         if (body == null) {
             log.error("Пустое тело ответа от TrudVsem");
         }
-        log.error(body.toString());
         return body;
     }
 
@@ -69,6 +68,9 @@ public class TrudVsemApiService {
         List<VacancyEntity> entitiesReceived = new ArrayList<>();
         VacancyResponseTrudVsem response = searchVacancies(searchText, area);
         log.error(response.toString());
+        if (response.getResults() == null || response.getResults().getVacancies() == null || response.getResults().getVacancies().isEmpty()) {
+            throw new IllegalStateException("There are no vacancies found for the given criteria.");
+        }
         for (VacancyResponseTrudVsem.VacancyContainer vacancyTrudVsem : response.getResults().getVacancies()) {
             VacancyEntity vacancyEntity = converterToEntityFromTrudVsemService.
                     convertEntityFromTrudVsem(vacancyTrudVsem.getVacancy());

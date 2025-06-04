@@ -32,7 +32,7 @@ public class VacancyExportService {
             strategy.export(all, fullFilename);
             return "Экспорт завершен: " + fullFilename;
         } catch (IOException e) {
-            return "Ошибка при экспорте: " + e.getMessage();
+            throw new IllegalStateException("Ошибка при экспорте: " + e.getMessage(), e);
         }
     }
 }
