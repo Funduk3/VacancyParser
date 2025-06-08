@@ -70,13 +70,17 @@ public class VacancyCommands {
                     value = {"-s", "--size"},
                     help = "Items per page",
                     defaultValue = "10"
-            ) int size
+            ) int size,
+            @ShellOption(
+                    value = {"--sort"},
+                    help = "Sort by field (title, salary, date)",
+                    defaultValue = "default"
+            ) String fieldSort
     ) {
         Page<VacancyEntity> result = vacancyFacadeService.getVacancies(
                 title, company, minSalary, maxSalary, area, page, size
         );
-
-        return vacancyFormatterUtil.formatResult(result);
+        return vacancyFormatterUtil.formatResult(result, fieldSort);
     }
 
     @ShellMethod(key = "fetch-vacancies", value = "Fetch vacancies from various API")

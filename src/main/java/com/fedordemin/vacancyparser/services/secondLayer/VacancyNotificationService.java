@@ -24,7 +24,7 @@ public class VacancyNotificationService {
         int size = 5;
         Page<VacancyEntity> initialPage = vacancyManagementService
                 .getVacancies(title, company, minSalary, maxSalary, area, 0, size);
-        String output = vacancyFormatterUtil.formatResult(initialPage);
+        String output = vacancyFormatterUtil.formatResult(initialPage, "default");
         System.out.println("These vacancies are already in the database:\n" + output);
 
         return String.valueOf(notificationService

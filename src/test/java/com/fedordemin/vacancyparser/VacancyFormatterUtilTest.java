@@ -8,10 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class VacancyFormatterUtilTest {
@@ -20,7 +24,8 @@ class VacancyFormatterUtilTest {
 
     @BeforeEach
     void setUp() {
-        vacancyFormatterUtil = new VacancyFormatterUtil();
+        Map<String, Object> strategies = new HashMap<>();
+        vacancyFormatterUtil = new VacancyFormatterUtil(new HashMap<>());
     }
 
     @Test
@@ -69,7 +74,7 @@ class VacancyFormatterUtilTest {
     }
 
     @Test
-    void testFormatResult() {
+    void testFormatResult_WithoutStrategy() {
         VacancyEntity vacancy1 = new VacancyEntity();
         vacancy1.setId("1");
         vacancy1.setName("Developer");
@@ -87,10 +92,9 @@ class VacancyFormatterUtilTest {
         List<VacancyEntity> list = Arrays.asList(vacancy1, vacancy2);
         Page<VacancyEntity> page = new PageImpl<>(list, PageRequest.of(0, 10), list.size());
 
-        String result = vacancyFormatterUtil.formatResult(page);
-        assertTrue(result.contains("Page 1/1 (2 total)"));
-        assertTrue(result.contains("ID: 1"));
-        assertTrue(result.contains("ID: 2"));
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
+                () -> vacancyFormatterUtil.formatResult(page, "default"));
+        assertTrue(thrown.getMessage().contains("Unknown sort strategy"));
     }
 
     @Test

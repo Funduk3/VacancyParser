@@ -2,23 +2,41 @@ package com.fedordemin.vacancyparser.utils.format;
 
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.utils.format.SortStrategy.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @Component
 public class VacancyFormatterUtil {
-    public String formatResult(Page<VacancyEntity> page) {
+    private final Map<String, VacancySortStrategy> sortStrategies;
+
+    @Autowired
+    public VacancyFormatterUtil(Map<String, VacancySortStrategy> sortStrategies) {
+        this.sortStrategies = sortStrategies;
+    }
+
+    public String formatResult(Page<VacancyEntity> page, String fieldSort) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("\n=== Page %d/%d (%d total) ===\n",
                 page.getNumber() + 1,
                 page.getTotalPages(),
                 page.getTotalElements()));
 
-        page.getContent().forEach(v -> sb.append(formatVacancy(v)));
+        String key = (fieldSort != null ? fieldSort.toLowerCase() : "default") + "SortStrategy";
+        if (!sortStrategies.containsKey(key)) {
+            throw new IllegalArgumentException("Unknown sort strategy: " + key);
+        }
+        VacancySortStrategy strategy = sortStrategies.get(key);
+        sb.append(strategy.getSortDescription()).append("\n");
+
+        List<VacancyEntity> sortedVacancies = strategy.sort(page);
+        sortedVacancies.forEach(v -> sb.append(formatVacancy(v)));
 
         return sb.toString();
     }

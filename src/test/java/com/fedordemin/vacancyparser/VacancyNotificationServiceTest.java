@@ -63,8 +63,8 @@ class VacancyNotificationServiceTest {
         when(vacancyManagementService.getVacancies(
                 anyString(), anyString(), anyInt(), anyInt(), anyString(), anyInt(), anyInt()))
                 .thenReturn(page);
-        when(vacancyFormatterUtil.formatResult(page)).thenReturn(formattedResult);
-        when(notificationService.startNotification(page, 1)).thenReturn(new AtomicReference<String>("true"));
+        when(vacancyFormatterUtil.formatResult(page, "default")).thenReturn(formattedResult);
+        when(notificationService.startNotification(page, 1)).thenReturn(new AtomicReference<>("true"));
 
         String result = vacancyNotificationService.sendNotification(
                 "Java", "Company", 1000, 2000, "Moscow");
@@ -72,7 +72,7 @@ class VacancyNotificationServiceTest {
         assertEquals("true", result);
         verify(vacancyManagementService).getVacancies(
                 "Java", "Company", 1000, 2000, "Moscow", 0, 5);
-        verify(vacancyFormatterUtil).formatResult(page);
+        verify(vacancyFormatterUtil).formatResult(page, "default");
         verify(notificationService).startNotification(page, 1);
 
         String consoleOutput = outputStream.toString();
@@ -88,8 +88,8 @@ class VacancyNotificationServiceTest {
         when(vacancyManagementService.getVacancies(
                 anyString(), anyString(), any(), any(), anyString(), anyInt(), anyInt()))
                 .thenReturn(emptyPage);
-        when(vacancyFormatterUtil.formatResult(emptyPage)).thenReturn(formattedResult);
-        when(notificationService.startNotification(emptyPage, 0)).thenReturn(new AtomicReference<String>("false"));
+        when(vacancyFormatterUtil.formatResult(emptyPage, "default")).thenReturn(formattedResult);
+        when(notificationService.startNotification(emptyPage, 0)).thenReturn(new AtomicReference<>("false"));
 
         String result = vacancyNotificationService.sendNotification(
                 "Python", "Company", null, null, "Area");
@@ -97,7 +97,7 @@ class VacancyNotificationServiceTest {
         assertEquals("false", result);
         verify(vacancyManagementService).getVacancies(
                 "Python", "Company", null, null, "Area", 0, 5);
-        verify(vacancyFormatterUtil).formatResult(emptyPage);
+        verify(vacancyFormatterUtil).formatResult(emptyPage, "default");
         verify(notificationService).startNotification(emptyPage, 0);
     }
 }

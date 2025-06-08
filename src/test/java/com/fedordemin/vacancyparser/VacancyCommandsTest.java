@@ -74,17 +74,18 @@ class VacancyCommandsTest {
         List<VacancyEntity> list = Collections.singletonList(new VacancyEntity());
         Page<VacancyEntity> page = new PageImpl<>(list);
         when(vacancyFacadeService.getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10)).thenReturn(page);
-        when(vacancyFormatterUtil.formatResult(page)).thenReturn("Formatted Page");
+        when(vacancyFormatterUtil.formatResult(page, "default")).thenReturn("Formatted Page");
 
-        String result = vacancyCommands.showVacancies("Java", "Company", 1000, 2000, "Area", 0, 10);
+        String result = vacancyCommands.showVacancies("Java", "Company", 1000, 2000, "Area", 0, 10, "default");
         assertEquals("Formatted Page", result);
         verify(vacancyFacadeService).getVacancies("Java", "Company", 1000, 2000, "Area", 0, 10);
-        verify(vacancyFormatterUtil).formatResult(page);
+        verify(vacancyFormatterUtil).formatResult(page, "default");
     }
 
     @Test
     void testFetchVacancies() throws Exception {
         doNothing().when(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
+        vacancyCommands.fetchVacancies("Java", "Company", "Area", "hh.ru");
         verify(vacancyFacadeService).fetchVacancies("Java", "Company", "Area", "hh.ru");
     }
 

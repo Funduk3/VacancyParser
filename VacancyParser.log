@@ -484,3 +484,18 @@
 1748983155256:show-vacancies --title uuu
 1748983170772:show-vacancies --min-salary iii
 1748983197819:show-vacancies --company 999
+1749394220600:help
+1749394223658:show-vacancies
+1749394884246:show-vacancies --help
+1749394897922:show-vacancies --sort salary
+1749395128648:show-vacancies
+1749395551864:stacktrace
+1749395862030:show-vacancies --sort salary
+1749396187161:show-history
+1749396191467:show-vacancies
+1749396555627:export-vacancies
+1749396770705:show-vacancies
+1749396982971:show-vacancies --sort salary
+1749397105259:show-vacancies --sort bla
+1749403357703:help
+1749403365859:show-vacancies

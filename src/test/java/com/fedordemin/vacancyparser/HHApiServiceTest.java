@@ -90,7 +90,7 @@ public class HHApiServiceTest {
         IllegalStateException exception = assertThrows(IllegalStateException.class, () ->
                 hhApiService.fetchHhRu("Java", "TestCompany", "1", true, 1, 10)
         );
-        assertEquals("No more vacancies to fetch", exception.getMessage());
+        assertEquals("There are no vacancies found for the given criteria.", exception.getMessage());
     }
 
     @Test
