@@ -499,3 +499,10 @@
 1749397105259:show-vacancies --sort bla
 1749403357703:help
 1749403365859:show-vacancies
+1749467074696:help
+1749467082763:show-vacancies
+1749467112669:show-vacancies --help
+1749467120685:show-vacancies --sort salary
+1749467212526:delete-vacancy --id 121336812
+1749467218265:delete-vacancy
+1749467228175:quit

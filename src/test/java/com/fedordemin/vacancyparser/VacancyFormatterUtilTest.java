@@ -2,6 +2,7 @@ package com.fedordemin.vacancyparser;
 
 import com.fedordemin.vacancyparser.entities.LogEntity;
 import com.fedordemin.vacancyparser.entities.VacancyEntity;
+import com.fedordemin.vacancyparser.utils.format.SortStrategy.VacancySortStrategy;
 import com.fedordemin.vacancyparser.utils.format.VacancyFormatterUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,10 +12,7 @@ import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -95,6 +93,41 @@ class VacancyFormatterUtilTest {
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class,
                 () -> vacancyFormatterUtil.formatResult(page, "default"));
         assertTrue(thrown.getMessage().contains("Unknown sort strategy"));
+    }
+
+    @Test
+    public void testFormatResult_ValidStrategy() {
+        VacancySortStrategy dummyStrategy = new VacancySortStrategy() {
+            @Override
+            public List<VacancyEntity> sort(Iterable<VacancyEntity> vacancies) {
+                List<VacancyEntity> list = new ArrayList<>();
+                vacancies.forEach(list::add);
+                return list;
+            }
+            @Override
+            public String getSortDescription() {
+                return "Dummy strategy";
+            }
+        };
+
+        Map<String, VacancySortStrategy> strategies = new HashMap<>();
+        strategies.put("defaultSortStrategy", dummyStrategy);
+        VacancyFormatterUtil util = new VacancyFormatterUtil(strategies);
+
+        VacancyEntity vacancy = new VacancyEntity();
+        vacancy.setId("1");
+        vacancy.setName("Test Vacancy");
+        vacancy.setEmployerName("Test Company");
+
+        List<VacancyEntity> vacancies = new ArrayList<>();
+        vacancies.add(vacancy);
+        Page<VacancyEntity> page = new PageImpl<>(vacancies, PageRequest.of(0, 10), vacancies.size());
+
+        String result = util.formatResult(page, "default");
+        assertTrue(result.contains("Dummy strategy"));
+        assertTrue(result.contains("ID: 1"));
+        assertTrue(result.contains("Title: Test Vacancy"));
+        assertTrue(result.contains("Company: Test Company"));
     }
 
     @Test
